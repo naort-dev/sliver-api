@@ -2,10 +2,13 @@ let express = require('express');
 let http = require('http');
 let router = require('./router/index');
 let bodyParser = require('body-parser');
+let expressValidator = require('express-validator');
 
 let app = express();
 
 app.use(bodyParser.json());
+app.use(expressValidator());
+
 app.use(router);
 
 http.createServer(app).listen(8100, () => {

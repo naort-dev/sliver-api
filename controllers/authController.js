@@ -7,9 +7,13 @@ class AuthController {
         User.findOne({name : req.body.name}, (err,user) => {
             if(err) throw err;
 
-            user.comparePassword(password, (err) => {
+            user.comparePassword(password, (err,isMatch) => {
                 if (err) throw err;
-                res.send(user);
+                
+                if(!isMatch) {
+                    res.status(401).send('Unauthorized');
+                }
+                res.status(200).send(user);
             });
         });
     }
@@ -25,7 +29,8 @@ class AuthController {
             .catch((error) => {
                 console.log(error,321123);
             });
-        res.send(user);
+
+        // res.send(user);
     }
 }
 
