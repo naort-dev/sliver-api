@@ -27,12 +27,12 @@ module.exports = (req,res,next) => {
 
     req.assert('creditCard')
         .notEmpty().withMessage('creditCard empty')
-        .isLength({min : 12}).withMessage('creditCard = 12')
+        .isLength({min : 16,max : 16}).withMessage('creditCard = 16')
         .isInt().withMessage('creditCard is not a number');
 
     req.assert('securityCode')
         .notEmpty().withMessage('securityCode empty')
-        .isLength({min : 3, max : 8}).withMessage('securityCode = min 3 max 8')
+        .isLength({min : 3, max: 3}).withMessage('securityCode = min 3 ')
         .isInt().withMessage('securityCode is not a number');
 
     req.assert('billingAddress')

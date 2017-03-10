@@ -30,22 +30,13 @@ let schema = new Schema({
     password : {
         type : String,
         require : true
-    },
-    creditCard : {
-        type : Number,
-        unique :true,
-        required : true
-    },
+    },    
     token : {
         type : String
     },
     expirationDate : {
         type : Date
-    },
-    securityCode : {
-        type : Number,
-        required : true
-    },
+    },    
     billingAddress : {
         type : String,
         required : true
