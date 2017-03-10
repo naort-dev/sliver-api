@@ -1,8 +1,8 @@
-let bcrypt = require('bcrypt');
+let crypto = require('crypto');
 let mongoose = require('../../libs/mongoose');
 let Schema = mongoose.Schema;
 
-const salt_factor = 10;
+const saltLength = 10;
 
 let schema = new Schema({
      name : {
@@ -41,26 +41,6 @@ let schema = new Schema({
         type : String,
         required : true
     }
-});
-
-schema.pre('save', function(next) {
-    let user = this;
-    
-    if (!user.isModified('password')) return next();
-
-    // generate a salt
-    bcrypt.genSalt(salt_factor, (err, salt) => {
-        if (err) return next(err);
-        
-        // hash the password using our new salt
-        bcrypt.hash(user.password, salt, (err, hash) => {
-            if (err) return next(err);
-
-            // override the cleartext password with the hashed one
-            user.password = hash;
-            next();
-        });
-    });
 });
 
 module.exports = mongoose.model('User', schema);

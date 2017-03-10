@@ -1,20 +1,22 @@
 const MongooseUser = require('../models/mongoose/user');
+const password = require('../libs/password');
 const async = require('async');
-const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
 const config = require('../config');
 
 class User {
     static signUp(userData) {
+        userData.password = password.hash(userData.password);
         return new MongooseUser(userData).save();
     }
     
     static comparePassword(user, candidatePassword){
          return new Promise((resolve, reject) => {
-            bcrypt.compare(candidatePassword, user.password, (err, isMatch) => {
-                if (err) reject(err);
-                resolve(isMatch);
-            });
+             if(password.validate(user.password,candidatePassword)) {
+                return resolve({userId : user.id});
+             }
+             return reject({msg : "Password miss match"});
+             
         });
     }
 
@@ -28,16 +30,6 @@ class User {
                     return mongooseUser = user;
                 })
                 .then(() => User.comparePassword(mongooseUser, password))
-                .then((isMatch) => {
-                    if(!isMatch) {
-                        // const err = new Error();
-                        // err.status = 400;
-                        // console.log(err);
-                        return reject({msg : "Password miss match"});
-                    }
-                    
-                    return mongooseUser.id;
-                })
                 .then(resolve)
                 .catch(reject);
         });
