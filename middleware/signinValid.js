@@ -1,11 +1,12 @@
 module.exports = (req,res,next) => {
-    req.assert('name')
-        .notEmpty().withMessage('name empty')
-        .isLength({min : 4, max : 20}).withMessage('name length 4 <= and >= 20');
+    req.assert('email')
+        .notEmpty().withMessage('email empty')
+        .isEmail().withMessage('is not email');
 
     req.assert('password')
         .notEmpty().withMessage('password empty')
-        .isLength({min : 6}).withMessage('password length < 6');
+        .isLength({min : 6}).withMessage('password length < 6')
+        .isInt().withMessage('password is not a number');
 
     req.getValidationResult()
         .then((result) => {

@@ -1,37 +1,18 @@
-let User = require('../models/user').User;
+const User = require('../models/user');
 
 class AuthController {
-    static signin(req,res) {
-        let password = req.body.password;
-
-        User.findOne({name : req.body.name}, (err,user) => {
-            if(err) throw err;
-
-            user.comparePassword(password, (err,isMatch) => {
-                if (err) throw err;
-                
-                if(!isMatch) {
-                    res.status(401).send('Unauthorized');
-                }
-                res.status(200).send(user);
-            });
-        });
+    static signin(req) {
+        return User.signIn(req.body.email, req.body.password);
     }
 
-    static signup(req,res) {
-        let user = new User(req.body.user);
-        
-        let promise = user.save();
-        promise
-            .then((response) => {
-                console.log(response, 123);
-            })
-            .catch((error) => {
-                console.log(error,321123);
-            });
-
-        // res.send(user);
+    static signup(req) {
+        return User.signUp(req.body);
     }
+
+    static forgot(req) {
+        return User.forgot(req.body.email);
+    }
+
 }
 
 module.exports = AuthController;

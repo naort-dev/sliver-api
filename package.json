@@ -15,6 +15,7 @@
   "license": "ISC",
   "homepage": "https://bitbucket.org/slapcenterv4mvp/slapcenter-api#readme",
   "dependencies": {
+    "async": "^2.1.5",
     "bcrypt": "^1.0.2",
     "body-parser": "^1.17.1",
     "express": "^4.15.2",
@@ -22,6 +23,7 @@
     "gulp": "^3.9.1",
     "gulp-nodemon": "^2.2.1",
     "mongoose": "^4.8.6",
-    "mpromise": "^0.5.5"
+    "mpromise": "^0.5.5",
+    "nodemailer": "^3.1.5"
   }
 }
