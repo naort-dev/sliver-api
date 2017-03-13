@@ -13,7 +13,9 @@ class User {
     static comparePassword(user, candidatePassword){
          return new Promise((resolve, reject) => {
              if(password.validate(user.password,candidatePassword)) {
-                return resolve({userId : user.id});
+                return resolve({
+                    token : user.id
+                });
              }
              return reject({msg : "Password miss match"});
              
@@ -30,6 +32,18 @@ class User {
                     return mongooseUser = user;
                 })
                 .then(() => User.comparePassword(mongooseUser, password))
+                .then(resolve)
+                .catch(reject);
+        });
+    }
+
+    static authToken(id){
+        return new Promise((resolve,reject) => {
+            MongooseUser.findOne({_id : id})
+                .then((user) => {
+                    if(!user) reject({msg : 'User not found to DB'});
+                    return user;
+                })
                 .then(resolve)
                 .catch(reject);
         });

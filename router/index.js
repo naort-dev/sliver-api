@@ -19,6 +19,7 @@ const runAction =  (action, req, res) => {
         });
 };
 
+router.get('/v1/auth/', (req, res) => runAction(authController.auth, req, res));
 router.post('/v1/auth/', signinValid, (req, res) => runAction(authController.signin, req, res));
 router.post('/v1/auth/signup', signupValid, (req, res) => runAction(authController.signup, req, res));
 

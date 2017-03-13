@@ -9,24 +9,24 @@ let schema = new Schema({
          type : String,
          required : true
      },
-    lastName : {
-        type : String,
-        required : true
-    },
-    businessName : {
-        type : String,
-        required : true
-    },
+    // lastName : {
+    //     type : String,
+    //     required : true
+    // },
+    // businessName : {
+    //     type : String,
+    //     required : true
+    // },
     email : {
         type : String,
         unique : true,
         required : true
     },
-    phone : {
-        type : Number,
-        unique : true,
-        required : true
-    },
+    // phone : {
+    //     type : Number,
+    //     unique : true,
+    //     required : true
+    // },
     password : {
         type : String,
         require : true
@@ -36,11 +36,11 @@ let schema = new Schema({
     },
     expirationDate : {
         type : Date
-    },    
-    billingAddress : {
-        type : String,
-        required : true
     }
+    // billingAddress : {
+    //     type : String,
+    //     required : true
+    // }
 });
 
 module.exports = mongoose.model('User', schema);
