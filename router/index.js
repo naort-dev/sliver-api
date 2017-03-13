@@ -14,7 +14,7 @@ const runAction =  (action, req, res) => {
         .catch((err) => {
             console.log(err);
             
-            res.status(err.status || 500).send(err.message || err);
+            res.status(err.status || 400).send(err.message || err);
             return;
         });
 };
