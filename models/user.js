@@ -53,9 +53,9 @@ class User {
     static resetPassword(email) {
         return new Promise( (resolve,reject) => {
             async.waterfall([createToken,findUser,sendToken], (err,result) => {
-                // if(err) reject(err);
-                // resolve(result);
-                console.log(err,123,result);
+                if(err) reject(err);
+                resolve(result);
+                // console.log(err,123,result);
             });
         });
 
@@ -103,7 +103,12 @@ class User {
                     'If you did not request this, please ignore this email and your password will remain unchanged.\n'
                 },
                 (err,result) => {
-                    callback(err,result);
+                    if(err) {
+                        callback(err);
+                        return;
+                    }
+                    callback(null,result);
+                    return;
                 });          
             transporter.close();
         }
