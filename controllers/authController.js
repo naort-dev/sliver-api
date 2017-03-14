@@ -10,12 +10,16 @@ class AuthController {
         return User.signUp(req.body);
     }
 
-    static resetPassword(req) {
-        return User.resetPassword(req.query.email);
+    static sendToken(req) {
+        return User.sendToken(req.query.email);
     }
     
     static auth(req) {
         return User.authToken(req.query['access-token']);
+    }
+    
+    static resetPassword(req) {
+        console.log(req.query.token);
     }
 
 }

@@ -50,12 +50,11 @@ class User {
         });
     }
     
-    static resetPassword(email) {
+    static sendToken(email) {
         return new Promise( (resolve,reject) => {
             async.waterfall([createToken,findUser,sendToken], (err,result) => {
-                // if(err) reject(err);
-                // resolve(result);
-                console.log(err,123,result);
+                if(err) reject(err);
+                resolve({ msg : 'mail sended!'});
             });
         });
 
@@ -90,7 +89,7 @@ class User {
                 });
         }
 
-        function sendToken(token,user,callback) {            
+        function sendToken(token,user,callback) { 
             let transporter = nodemailer.createTransport(ses(config.mailer));
             
             transporter.sendMail({
@@ -99,7 +98,7 @@ class User {
                     subject: 'SLAPCenter Password Reset',
                     text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
                     'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
-                    'http://' + req.headers.host + '/reset/' + token + '\n\n' +
+                    'http://' + config.host + '/v1/auth/reset/' + token + '\n\n' +
                     'If you did not request this, please ignore this email and your password will remain unchanged.\n'
                 },
                 (err,result) => {

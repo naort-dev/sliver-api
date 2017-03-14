@@ -8,12 +8,11 @@ let authController = require('../controllers/authController');
 const runAction =  (action, req, res) => {
     action(req, res)
         .then( (data) => {
+            console.log(data);
             res.status(200).send(data);
             return;
         })
         .catch((err) => {
-            console.log(err);
-            
             res.status(err.status || 400).send(err.message || err);
             return;
         });
@@ -23,6 +22,7 @@ router.get('/v1/auth/', (req, res) => runAction(authController.auth, req, res));
 router.post('/v1/auth/', signinValid, (req, res) => runAction(authController.signin, req, res));
 router.post('/v1/auth/signup', signupValid, (req, res) => runAction(authController.signup, req, res));
 
-router.get('/v1/auth/reset', authController.resetPassword);
+router.get('/v1/auth/reset', (req, res) => runAction(authController.sendToken, req, res));
+router.get('/v1/auth/reset/:token', (req,res) => runAction(authController.resetPassword,req,res));
 
 module.exports = router;
