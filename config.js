@@ -1,5 +1,5 @@
 module.exports = {
-     host : 'http://35.167.122.18',
+     host : 'http://35.167.122.18/',
      db : process.env.db || 'mongodb://localhost:27017/slap',
      mailer : {
           accessKeyId: "AKIAIA62CYCWJTLMM6JQ",
