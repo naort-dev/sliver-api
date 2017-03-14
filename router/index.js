@@ -23,6 +23,6 @@ router.post('/v1/auth/', signinValid, (req, res) => runAction(authController.sig
 router.post('/v1/auth/signup', signupValid, (req, res) => runAction(authController.signup, req, res));
 
 router.get('/v1/auth/reset', (req, res) => runAction(authController.sendToken, req, res));
-router.get('/v1/auth/reset/:token', (req,res) => runAction(authController.resetPassword,req,res));
+router.post('/v1/auth/check-password', (req,res) => runAction(authController.checkPassword,req,res));
 
 module.exports = router;

@@ -18,8 +18,11 @@ class AuthController {
         return User.authToken(req.query['access-token']);
     }
     
-    static resetPassword(req) {
-        console.log(req.query.token);
+    static checkPassword(req) {
+        let token = req.body['access-token'];
+        let password = req.body['new_password'];
+
+        return User.resetPassword(token,password);
     }
 
 }

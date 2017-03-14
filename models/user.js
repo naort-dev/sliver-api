@@ -1,5 +1,5 @@
 const MongooseUser = require('../models/mongoose/user');
-const password = require('../libs/password');
+const hashPass = require('../libs/password');
 const async = require('async');
 const nodemailer = require('nodemailer');
 const ses =require('nodemailer-ses-transport');
@@ -7,13 +7,13 @@ const config = require('../config');
 
 class User {
     static signUp(userData) {
-        userData.password = password.hash(userData.password);
+        userData.password = hashPass.hash(userData.password);
         return new MongooseUser(userData).save();
     }
     
     static comparePassword(user, candidatePassword){
          return new Promise((resolve, reject) => {
-             if(password.validate(user.password,candidatePassword)) {
+             if(hashPass.validate(user.password,candidatePassword)) {
                 return resolve({
                     token : user.id
                 });
@@ -59,7 +59,7 @@ class User {
         });
 
         function createToken (callback) {
-            let token = password.hash(email);
+            let token = hashPass.hash(email);
             callback(null,token);
         }
 
@@ -98,7 +98,7 @@ class User {
                     subject: 'SLAPCenter Password Reset',
                     text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
                     'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
-                    'http://' + config.host + '/v1/auth/reset/' + token + '\n\n' +
+                    'http://' + config.host + '/reset/' + token + '\n\n' +
                     'If you did not request this, please ignore this email and your password will remain unchanged.\n'
                 },
                 (err,result) => {
@@ -111,6 +111,26 @@ class User {
                 });          
             transporter.close();
         }
+    }
+
+    static resetPassword(token,password) {
+        return new Promise( (resolve,reject) => {
+            MongooseUser.findOne({token : token, expirationDate : {$gt : Date.now()} })
+                .then( (user) => {
+                    if(!user) {
+                        return resolve({msg : 'Password reset token is invalid or has expired.'}); // TODO: errorhandler
+                    }
+                    
+                    user.token = '';
+                    user.expirationDate = '';
+                    user.password = hashPass.hash(password);
+                    
+                    user.save()
+                        .then(resolve)
+                        .catch(reject);
+                })
+                .catch(reject);
+        });
     }
 }
 
