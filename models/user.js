@@ -2,7 +2,7 @@ const MongooseUser = require('../models/mongoose/user');
 const password = require('../libs/password');
 const async = require('async');
 const nodemailer = require('nodemailer');
-const smtp =require('nodemailer-smtp-transport');
+const ses =require('nodemailer-ses-transport');
 const config = require('../config');
 
 class User {
@@ -92,7 +92,7 @@ class User {
 
         function sendToken(token,user,callback) {
 
-            let transporter = nodemailer.createTransport(smtp(config.mailer));
+            let transporter = nodemailer.createTransport(ses(config.mailer));
 
             transporter.sendMail({
                     from: 'admin@silverlininglimited.com',
