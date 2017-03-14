@@ -92,39 +92,40 @@ class User {
 
         function sendToken(token,user,callback) {
 
+            
             let transporter = nodemailer.createTransport(ses(config.mailer));
 
-            transporter.sendMail({
-                    from: 'admin@silverlininglimited.com',
-                    to: 'pedchenko07@gmail.com',
-                    subject: 'dbuysuy',
-                    text: 'Hello AWS'
-                },
-                (err,info) => {
-                    // if(err){
-                    //     res.send('error');
-                    // } else {
-                    //     res.send('sent');
-                    // }
-                    console.log(info);
-                    console.log(err);
+            // transporter.sendMail({
+            //         from: 'admin@silverlininglimited.com',
+            //         to: 'pedchenko07@gmail.com',
+            //         subject: 'dbuysuy',
+            //         text: 'Hello AWS'
+            //     },
+            //     (err,info) => {
+            //         // if(err){
+            //         //     res.send('error');
+            //         // } else {
+            //         //     res.send('sent');
+            //         // }
+            //         console.log(info);
+            //         console.log(err);
+            //
+            //     });
 
-                });          
+
+            let mailOptions = {
+                to: 'pedchenko07@gmail.com',
+                from: 'admin@silverlininglimited.com',
+                subject: 'Node.js Password Reset',
+                text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
+                'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
+                'http://' + req.headers.host + '/reset/' + token + '\n\n' +
+                'If you did not request this, please ignore this email and your password will remain unchanged.\n'
+            };
             
-            //
-            // let mailOptions = {
-            //     to: 'pedchenko07@gmail.com',
-            //     from: 'admin@silverlininglimited.com',
-            //     subject: 'Node.js Password Reset',
-            //     text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
-            //     'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
-            //     'http://' + req.headers.host + '/reset/' + token + '\n\n' +
-            //     'If you did not request this, please ignore this email and your password will remain unchanged.\n'
-            // };
-            //
-            // transport.sendMail(mailOptions, (err, result) => {
-            //     callback(err,result);
-            // });
+            transport.sendMail(mailOptions, (err, result) => {
+                callback(err,result);
+            });
 
         }
     }
