@@ -10,8 +10,8 @@ class AuthController {
         return User.signUp(req.body);
     }
 
-    static forgot(req) {
-        return User.forgot(req.body.email);
+    static resetPassword(req) {
+        return User.resetPassword(req.query.email);
     }
     
     static auth(req) {

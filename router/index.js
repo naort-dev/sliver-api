@@ -23,18 +23,6 @@ router.get('/v1/auth/', (req, res) => runAction(authController.auth, req, res));
 router.post('/v1/auth/', signinValid, (req, res) => runAction(authController.signin, req, res));
 router.post('/v1/auth/signup', signupValid, (req, res) => runAction(authController.signup, req, res));
 
-router.post('/v1/auth/forgot',
-    (req,res,next) => {
-        req.check('email', 'Is invalid email').isEmail();
-        let errors = req.validationErrors();
-
-        if(errors) {
-            res.status(401).send(errors);
-            return;
-        }
-
-        next();
-    },
-    authController.forgot);
+router.get('/v1/auth/reset', authController.resetPassword);
 
 module.exports = router;

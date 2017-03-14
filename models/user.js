@@ -2,6 +2,7 @@ const MongooseUser = require('../models/mongoose/user');
 const password = require('../libs/password');
 const async = require('async');
 const nodemailer = require('nodemailer');
+const smtp =require('nodemailer-smtp-transport');
 const config = require('../config');
 
 class User {
@@ -49,69 +50,83 @@ class User {
         });
     }
     
-    static forgot(email) {
-        // return new Promise( (resolve,reject) => {
-        //     async.waterfall([createToken,findUser,sendToken], (err,result) => {
-        //         if(err) reject(err)
-        //     });
-        // });
-        //
-        //
-        //
-        // function createToken (callback) {
-        //     let token = bcrypt.genSaltSync(10);
-        //     callback(null,token);
-        // }
-        //
-        // function findUser(token,callback) {
-        //     MongooseUser.findOne({email : email})
-        //         .then(user => {
-        //             if(!user) callback('User not found in db');
-        //             user.token = token;
-        //             user.expirationDate = Date.now() + 360000;
-        //             user.save()
-        //                 .then(user => callback(null,token,user))
-        //                 .catch(reject);
-        //         });
-        //     // MongooseUser.findOne({email : email}, (err,user) => {
-        //     //     if(err) callback(err);
-        //     //
-        //     //     if(!user) {
-        //     //         callback('User not found');
-        //     //     }
-        //     //     //
-        //     //     user.token = token;
-        //     //     user.expirationDate = Date.now() + 360000;
-        //     //
-        //     //     user.save()
-        //     //         .then((user) => {
-        //     //             callback(null,token,user);
-        //     //         })
-        //     //         .catch( (err) => {
-        //     //             callback(err);
-        //     //         });
-        //     // };
-        // }
-        //
-        // function sendToken(token,user,callback) {
-        //     console.log(token,123,user);
-        // //     let transport = nodemailer.createTransport(config.mailer);
-        // //
-        // //     let mailOptions = {
-        // //         to: user.email,
-        // //         from: 'passwordreset@demo.com',
-        // //         subject: 'Node.js Password Reset',
-        // //         text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
-        // //         'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
-        // //         'http://' + req.headers.host + '/reset/' + token + '\n\n' +
-        // //         'If you did not request this, please ignore this email and your password will remain unchanged.\n'
-        // //     };
-        // //
-        // //     transport.sendMail(mailOptions, (err, result) => {
-        // //         callback(err,result);
-        // //     });
-        // //
-        // }
+    static resetPassword(email) {
+        return new Promise( (resolve,reject) => {
+            async.waterfall([createToken,findUser,sendToken], (err,result) => {
+                console.log(123,err);
+            });
+        });
+
+
+
+        function createToken (callback) {
+            let token = password.hash(email);
+            callback(null,token);
+        }
+
+        function findUser(token,callback) {
+            MongooseUser.findOne({email : email})
+                .then( (user) => {
+                    if(!user) {
+                        callback('User not found');
+                        return;
+                    }
+
+                    user.token = token;
+                    user.expirationDate = Date.now() + 360000;
+                    user.save()
+                        .then( (user) => {
+                            callback(null,token,user);
+                            return;
+                        })
+                        .catch( (err) => {
+                            callback(err);
+                            return;
+                        });
+                })
+                .catch( (err) => {
+                    callback(err);
+                    return;
+                });
+        }
+
+        function sendToken(token,user,callback) {
+
+            let transporter = nodemailer.createTransport(smtp(config.mailer));
+
+            transporter.sendMail({
+                    from: 'admin@silverlininglimited.com',
+                    to: 'pedchenko07@gmail.com',
+                    subject: 'dbuysuy',
+                    text: 'Hello AWS'
+                },
+                (err,info) => {
+                    // if(err){
+                    //     res.send('error');
+                    // } else {
+                    //     res.send('sent');
+                    // }
+                    console.log(info);
+                    console.log(err);
+
+                });          
+            
+            //
+            // let mailOptions = {
+            //     to: 'pedchenko07@gmail.com',
+            //     from: 'admin@silverlininglimited.com',
+            //     subject: 'Node.js Password Reset',
+            //     text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
+            //     'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
+            //     'http://' + req.headers.host + '/reset/' + token + '\n\n' +
+            //     'If you did not request this, please ignore this email and your password will remain unchanged.\n'
+            // };
+            //
+            // transport.sendMail(mailOptions, (err, result) => {
+            //     callback(err,result);
+            // });
+
+        }
     }
 }
 
