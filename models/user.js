@@ -53,9 +53,9 @@ class User {
     static resetPassword(email) {
         return new Promise( (resolve,reject) => {
             async.waterfall([createToken,findUser,sendToken], (err,result) => {
-                if(err) reject(err);
-                resolve(result);
-                // console.log(err,123,result);
+                // if(err) reject(err);
+                // resolve(result);
+                console.log(err,123,result);
             });
         });
 
