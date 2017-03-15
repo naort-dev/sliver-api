@@ -1,5 +1,6 @@
 const MongooseUser = require('../models/mongoose/user');
 const hashPass = require('../libs/password');
+const AuthError = require('../libs/Error/AuthError');
 const async = require('async');
 const nodemailer = require('nodemailer');
 const ses =require('nodemailer-ses-transport');
@@ -18,7 +19,7 @@ class User {
                     token : user.id
                 });
              }
-             return reject({msg : "Password miss match"});
+             return reject(new AuthError(400,'Password miss match.'));
              
         });
     }
@@ -29,7 +30,7 @@ class User {
 
             MongooseUser.findOne({email : email})
                 .then((user) => {
-                    if(!user) reject({msg : 'User not found to DB'});
+                    if(!user) reject(new AuthError(400,'User not found to Db'));
                     return mongooseUser = user;
                 })
                 .then(() => User.comparePassword(mongooseUser, password))
@@ -42,7 +43,7 @@ class User {
         return new Promise((resolve,reject) => {
             MongooseUser.findOne({_id : id})
                 .then((user) => {
-                    if(!user) reject({msg : 'User not found to DB'});
+                    if(!user) reject(new AuthError(400,'User not found to Db'));
                     return user;
                 })
                 .then(resolve)
@@ -98,7 +99,7 @@ class User {
                     subject: 'SLAPCenter Password Reset',
                     text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
                     'Please click on the following link, or paste this into your browser to complete the process:\n\n' 
-                    + config.host + 'public/#/reset/' + token + '\n\n' +
+                    + config.host + '#/reset/' + token + '\n\n' +
                     'If you did not request this, please ignore this email and your password will remain unchanged.\n'
                 },
                 (err,result) => {
@@ -118,7 +119,7 @@ class User {
             MongooseUser.findOne({token : token, expirationDate : {$gt : Date.now()} })
                 .then( (user) => {
                     if(!user) {
-                        return resolve({msg : 'Password reset token is invalid or has expired.'}); // TODO: errorhandler
+                        return reject( new AuthError(400,'Password reset token is invalid or has expired.')); 
                     }
                     
                     user.token = '';
