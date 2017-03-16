@@ -1,5 +1,8 @@
 const User = require('../models/user');
 const url = require('url');
+const stripe = require('../services/stripe');
+const StripeService = stripe.service;
+const StripeError = require('../services/stripe/errors/StripeError');
 
 class AuthController {
     static signin(req) {
@@ -7,7 +10,36 @@ class AuthController {
     }
 
     static signup(req) {
-        return User.signUp(req.body);
+        let userData = {
+            name : req.body.name,
+            email : req.body.email,
+            password : req.body.password
+        };
+        
+        let cardData = req.body.card;
+        let mongoUser;
+        
+        return new Promise( (resolve,reject) => {
+            User.create(userData)
+                .then( (user) => {
+                    return mongoUser = user;
+                })
+                .then( () => {
+                    return StripeService.createCustomer(userData,cardData);
+                })
+                .then( (customer) => {
+                    return User.update(customer.id,mongoUser._id);
+                })
+                .then( () => {
+                    resolve(mongoUser);
+                })
+                .catch((err) => {
+                    if(err instanceof StripeError){
+                        User.delete(mongoUser);
+                    }
+                    return reject(err);
+                });
+        });
     }
 
     static sendToken(req) {
@@ -21,7 +53,7 @@ class AuthController {
     static checkPassword(req) {
         let token = req.body['access-token'];
         let password = req.body['new_password'];
-
+        
         return User.resetPassword(token,password);
     }
 

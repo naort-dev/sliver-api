@@ -1,25 +1,26 @@
 const MongooseUser = require('../models/mongoose/user');
-const hashPass = require('../libs/password');
-const AuthError = require('../libs/Error/AuthError');
+const hashPass = require('../libs/class/HashPass');
+const AuthError = require('../libs/error/AuthError');
 const async = require('async');
 const nodemailer = require('nodemailer');
 const ses =require('nodemailer-ses-transport');
 const config = require('../config');
 
 class User {
-    static signUp(userData) {
-        userData.password = hashPass.hash(userData.password);
+
+    static create(userData) {
+        userData.password = hashPass.createHash(userData.password);
         return new MongooseUser(userData).save();
     }
     
     static comparePassword(user, candidatePassword){
          return new Promise((resolve, reject) => {
-             if(hashPass.validate(user.password,candidatePassword)) {
+             if(hashPass.validateHash(user.password,candidatePassword)) {
                 return resolve({
                     token : user.id
                 });
              }
-             return reject(new AuthError(400,'Password miss match.'));
+             return reject(new AuthError('Password miss match.', 'UNAUTH'));
              
         });
     }
@@ -30,7 +31,7 @@ class User {
 
             MongooseUser.findOne({email : email})
                 .then((user) => {
-                    if(!user) reject(new AuthError(400,'User not found to Db'));
+                    if(!user) reject(new AuthError('User not found to DB', 'NOT_FOUND'));
                     return mongooseUser = user;
                 })
                 .then(() => User.comparePassword(mongooseUser, password))
@@ -43,7 +44,7 @@ class User {
         return new Promise((resolve,reject) => {
             MongooseUser.findOne({_id : id})
                 .then((user) => {
-                    if(!user) reject(new AuthError(400,'User not found to Db'));
+                    if(!user) reject(new AuthError('User not found to DB', 'NOT_FOUND'));
                     return user;
                 })
                 .then(resolve)
@@ -54,13 +55,14 @@ class User {
     static sendToken(email) {
         return new Promise( (resolve,reject) => {
             async.waterfall([createToken,findUser,sendToken], (err,result) => {
-                if(err) reject(err);
-                resolve({ msg : 'mail sended!'});
+                if(err) reject( new AuthError('Not send mail!', 'SERVICE_UNAVAILABLE', {orig : err}));
+                resolve(new AuthError('Letter email was sent! Run to your inbox to check it out', 'OK', {orig : result}));
+                // resolve(result);
             });
         });
 
         function createToken (callback) {
-            let token = hashPass.hash(email);
+            let token = hashPass.createHash(email);
             callback(null,token);
         }
 
@@ -124,13 +126,34 @@ class User {
                     
                     user.token = '';
                     user.expirationDate = '';
-                    user.password = hashPass.hash(password);
+                    user.password = hashPass.createHash(password);
                     
                     user.save()
                         .then(resolve)
                         .catch(reject);
                 })
                 .catch(reject);
+        });
+    }
+    
+    static delete(user) {
+        return new Promise( (resolve,reject) => {
+            return MongooseUser.findByIdAndRemove({_id : user._id}, (err,result) => {
+                if(err) return reject(err);
+                
+                return resolve(result);
+            });
+        });
+    }
+    
+    static update(stripeId,userId) 
+    {
+        return new Promise( (resolve,reject) => {
+            MongooseUser.update({_id : userId}, {$set : {stripeId : stripeId}}, (err,result) => {
+                if(err) return reject(err);
+                
+                return resolve(result);
+            });
         });
     }
 }

@@ -8,12 +8,13 @@ let authController = require('../controllers/authController');
 const runAction =  (action, req, res) => {
     action(req, res)
         .then( (data) => {
-            console.log(data);
+            console.log("Data : " + data);
             res.status(200).send(data);
             return;
         })
         .catch((err) => {
-            res.status(err.status || 400).send(err.message || err);
+            console.log('Router: ' + err);
+            res.status(err.status || 400).send(err);
             return;
         });
 };

@@ -7,5 +7,6 @@ module.exports = {
           rateLimit: 5,  // do not send more than 5 messages in a second
           region : 'us-west-2'
      },
-     emailAddress : 'admin@silverlininglimited.com'
+     emailAddress : 'admin@silverlininglimited.com',
+     stripe_key : 'sk_test_T3Cta1rkPcNP4U41MBgjp4cj'
 };

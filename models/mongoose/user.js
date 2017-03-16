@@ -2,8 +2,6 @@ let crypto = require('crypto');
 let mongoose = require('../../libs/mongoose');
 let Schema = mongoose.Schema;
 
-const saltLength = 10;
-
 let schema = new Schema({
      name : {
          type : String,
@@ -36,11 +34,15 @@ let schema = new Schema({
     },
     expirationDate : {
         type : Date
-    }
+    },
     // billingAddress : {
     //     type : String,
     //     required : true
     // }
+    stripeId : {
+        type : String,
+        require : true
+    }
 });
 
 module.exports = mongoose.model('User', schema);
