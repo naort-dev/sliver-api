@@ -8,5 +8,5 @@ module.exports = {
           region : 'us-west-2'
      },
      emailAddress : 'admin@silverlininglimited.com',
-     stripe_key : 'sk_test_T3Cta1rkPcNP4U41MBgjp4cj'
+     stripe_key : 'tixY8bh31H4c4uHbqmwfmrG8ITfOSVb6'
 };
