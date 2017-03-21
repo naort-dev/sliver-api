@@ -156,6 +156,22 @@ class User {
             });
         });
     }
+    
+    static signinAdmin(email,password)
+    {
+        return new Promise((resolve, reject) => {
+            let mongooseUser;
+
+            MongooseUser.findAdminByEmail(email)
+                .then((user) => {
+                    if(!user) reject(new AuthError('User not found to DB', 'NOT_FOUND'));
+                    return mongooseUser = user;
+                })
+                .then(() => User.comparePassword(mongooseUser, password))
+                .then(resolve)
+                .catch(reject);
+        });
+    }
 }
 
 module.exports = User;

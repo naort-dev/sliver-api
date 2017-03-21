@@ -1,5 +1,4 @@
 const User = require('../models/user');
-const url = require('url');
 const stripe = require('../services/stripe');
 const StripeService = stripe.service;
 const StripeError = require('../services/stripe/errors/StripeError');

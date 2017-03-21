@@ -5,7 +5,7 @@ module.exports = (req,res,next) => {
 
     req.assert('password')
         .notEmpty().withMessage('password empty')
-        .isLength({min : 6}).withMessage('password length < 6');
+        .isLength({min : 4}).withMessage('password length < 6');
 
     req.getValidationResult()
         .then((result) => {

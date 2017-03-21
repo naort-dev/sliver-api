@@ -4,6 +4,7 @@ let router = express.Router();
 let signinValid = require('../middleware/signinValid');
 let signupValid = require('../middleware/signupValid');
 let authController = require('../controllers/authController');
+let authAdminController = require('../controllers/admin/authAdminController');
 
 const runAction =  (action, req, res) => {
     action(req, res)
@@ -25,5 +26,8 @@ router.post('/v1/auth/signup', signupValid, (req, res) => runAction(authControll
 
 router.get('/v1/auth/reset', (req, res) => runAction(authController.sendToken, req, res));
 router.post('/v1/auth/check-password', (req,res) => runAction(authController.checkPassword,req,res));
+
+//Admin
+router.post('/admin/auth', signinValid, (req,res) => runAction(authAdminController.signinAdmin,req,res));
 
 module.exports = router;

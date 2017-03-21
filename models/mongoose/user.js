@@ -1,6 +1,7 @@
-let crypto = require('crypto');
 let mongoose = require('../../libs/mongoose');
 let Schema = mongoose.Schema;
+
+const ADMIN = 1;
 
 let schema = new Schema({
      name : {
@@ -40,9 +41,18 @@ let schema = new Schema({
     //     required : true
     // }
     stripeId : {
-        type : String,
-        require : true
+        type : String
+        // require : true
+    },
+    isAdmin : {
+        type : Number,
+        enum : [0,1],
+        default : 0
     }
+});
+
+schema.static('findAdminByEmail', function (email,callback) {
+    return this.findOne({email : email, isAdmin : ADMIN}, callback);
 });
 
 module.exports = mongoose.model('User', schema);
