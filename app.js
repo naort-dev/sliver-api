@@ -7,7 +7,13 @@ let expressValidator = require('express-validator');
 let app = express();
 
 app.use(bodyParser.json());
-app.use(expressValidator());
+app.use(expressValidator({
+    customValidators: {
+        isArray: function (value) {
+            return Array.isArray(value);
+        }
+    }
+}));
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
