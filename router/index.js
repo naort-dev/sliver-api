@@ -1,13 +1,17 @@
 let express = require('express');
 let router = express.Router();
 
+//Validators
 let signinValid = require('../middleware/validation/signinValid');
 let signupValid = require('../middleware/validation/signupValid');
 let productValid = require('../middleware/validation/productValid');
 
+//Middleware
+const isAdmin = require('../middleware/isAdmin');
+
 //Controllers
 let authController = require('../controllers/authController');
-let productController = require('../controllers/productController');
+let productController = require('../controllers/admin/productController');
 let authAdminController = require('../controllers/admin/authAdminController');
 
 const runAction =  (action, req, res) => {
@@ -36,7 +40,12 @@ router.get('/v1/auth/reset', (req, res) => runAction(authController.sendToken, r
 router.post('/v1/auth/check-password', (req,res) => runAction(authController.checkPassword,req,res));
 
 //Admin
+router.get('/admin/auth/', (req, res) => runAction(authController.auth, req, res));
 router.post('/admin/auth', signinValid, (req,res) => runAction(authAdminController.signinAdmin,req,res));
 
+
+//Manage
+router.post('/admin/products/create', isAdmin, productValid, (req, res) => runAction(productController.create, req, res));
+router.post('/admin/products', isAdmin, (req, res) => runAction(productController.getProducts, req, res));
 
 module.exports = router;

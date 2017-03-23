@@ -14,6 +14,9 @@ module.exports = (req,res,next) => {
 
     req.assert('execute_fee')
         .isInt().withMessage('Execute fee is require');
+    
+    req.assert('of_execute_fee')
+        .isInt().withMessage('Of Execute month is require');
 
     req.assert('billing_period')
         .isInt().withMessage('Execute fee is require');
