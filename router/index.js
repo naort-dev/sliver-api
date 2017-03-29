@@ -49,5 +49,6 @@ router.post('/admin/products', isAdmin, productValid, (req, res) => runAction(pr
 router.get('/admin/products', isAdmin, (req, res) => runAction(productController.getProducts, req, res));
 router.get('/admin/products/:id', isAdmin, (req, res) => runAction(productController.getProduct, req, res));
 router.put('/admin/products/:id', isAdmin, (req, res) => runAction(productController.updateProduct, req, res));
+router.post('/admin/products/:id', isAdmin, (req, res) => runAction(productController.deleteProduct, req, res));
 
 module.exports = router;

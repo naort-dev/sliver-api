@@ -37,10 +37,27 @@ class Product {
             MongooseProduct.findOne({_id: id})
                 .then((data) => {
                     if (!data) reject(new AuthError('Item not found to DB', 'NOT_FOUND'));
-                    return data;
+                    return {product : data};
                 })
                 .then(resolve)
                 .catch(reject);
+        });
+    }
+    
+    static updateProduct(product) {
+        console.log(product);
+        return new Promise((resolve,reject) => {
+            MongooseProduct.findOneAndUpdate({_id: product._id}, product, (err,res) => {
+                return err ? reject(err) : resolve(res);
+            });
+        });
+    };
+
+    static deleteProduct(id) {
+        return new Promise((resolve,reject) => {
+            MongooseProduct.remove({_id : id}, (err,response) => {
+                return err ? reject(err) : resolve(response.result);
+            });
         });
     }
 }
