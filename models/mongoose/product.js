@@ -35,7 +35,7 @@ let schema = new Schema({
         require : true
     },
     product_display_order : {
-        type : String,
+        type : Number,
         require : true
     },
     product_status : {
