@@ -44,12 +44,29 @@ let schema = new Schema({
         type : String
         // require : true
     },
+    stripeSource : {
+        type: String
+    },
     isAdmin : {
         type : Number,
         enum : [0,1],
         default : 1
+    },
+    planId : {
+        type: String
+    },
+    buildId : {
+        type : String
     }
+
+
 });
+
+schema.methods = {
+    updateStripeCustomer : function(customer) {
+        return this.update({$set: {stripeId:customer.id,stripeSource:customer.default_source}});
+    }
+};
 
 schema.static('findAdminByEmail', function (email,callback) {
     return this.findOne({email : email, isAdmin : ADMIN}, callback);

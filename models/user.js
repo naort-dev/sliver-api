@@ -1,10 +1,15 @@
 const MongooseUser = require('../models/mongoose/user');
+const MongoosePayments = require('../models/mongoose/payments');
+const MongooseProduct = require('../models/mongoose/product');
 const hashPass = require('../libs/class/HashPass');
 const AuthError = require('../libs/error/AuthError');
 const async = require('async');
 const nodemailer = require('nodemailer');
 const ses =require('nodemailer-ses-transport');
 const config = require('../config');
+const stripe = require('../services/stripe');
+const StripeService = stripe.service;
+const StripeError = require('../services/stripe/errors/StripeError');
 
 class User {
 
@@ -24,6 +29,73 @@ class User {
              
         });
     }
+    
+    static signUp(userData) {
+        return new Promise((resolve,reject) => {
+            userData.buildId = '';
+
+            let self = this;
+            let mongo = {payments: []};
+
+            self.create(userData)
+                .then((user) => {
+                    mongo.user = user;
+                    return MongooseProduct.findOne({_id : userData.planId});
+                })
+                .then((plan) => {
+                    // mongo.plan = plan;
+                    return plan.createPlanPayment();
+                })
+                .then((payment) => {
+                    mongo.payments.push(payment);
+                    if(userData.buildId) {
+                        return MongooseProduct.findOne({_id : userData.buildId});
+                    }
+                })
+                .then((build) => {
+                    if(build) {
+                        // mongo.build = build;
+                        return build.createFirstBuildPayment();
+                    }
+                })
+                .then((payment) => {
+                    if(payment) {
+                        mongo.payments.push(payment);
+                    }
+
+                    return StripeService.createCustomer(userData);
+                })
+                .then((customer) => {
+                    mongo.customer = customer;
+                    return mongo.user.updateStripeCustomer(customer);
+                })
+                .then(() => {
+                    return MongoosePayments.calculatePayments(mongo.payments);
+                })
+                .then((payment) => {
+                    mongo.payment = payment;
+                    return StripeService.createCharges(mongo.customer,payment);
+                })
+                .then((charges) => {
+                    return MongoosePayments({
+                        userId : mongo.user._id,
+                        productIds : mongo.payment.productIds,
+                        paymentDate : new Date(charges.created * 1000),
+                        status : charges.status == 'succeeded' ? 1 : 0
+                    }).save();
+                })
+                .then(() => {
+                    resolve(mongo.user);
+                })
+                .catch((err) => {
+                    if(err instanceof StripeError){
+                        self.delete(mongo.user);
+                    }
+
+                    reject(err);
+                });
+        });
+    }
 
     static signIn(email, password) {
         return new Promise((resolve, reject) => {
@@ -40,7 +112,7 @@ class User {
         });
     }
 
-    static authToken(id){
+    static authToken(id) {
         return new Promise((resolve,reject) => {
             MongooseUser.findOne({_id : id})
                 .then((user) => {
@@ -139,15 +211,12 @@ class User {
     static delete(user) {
         return new Promise( (resolve,reject) => {
             return MongooseUser.findByIdAndRemove({_id : user._id}, (err,result) => {
-                if(err) return reject(err);
-                
-                return resolve(result);
+                return err ? reject(err) : resolve(result);
             });
         });
     }
     
-    static update(stripeId,userId) 
-    {
+    static update(stripeId,userId) {
         return new Promise( (resolve,reject) => {
             MongooseUser.update({_id : userId}, {$set : {stripeId : stripeId}}, (err,result) => {
                 if(err) return reject(err);
@@ -157,8 +226,7 @@ class User {
         });
     }
     
-    static signinAdmin(email,password)
-    {
+    static signinAdmin(email,password) {
         return new Promise((resolve, reject) => {
             let mongooseUser;
 

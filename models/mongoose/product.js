@@ -2,58 +2,63 @@ let mongoose = require('../../libs/mongoose');
 let Schema = mongoose.Schema;
 
 let schema = new Schema({
-    product_name : {
+    productName : {
         type : String,
         required : true
     },
-    product_description : {
+    productDescription : {
         type : String,
         required : true
     },
-    build_fee : {
-        type : Number,
-        require: true
-    },
-    of_build_month : {
-        type : Number,
-        require: true
-    },
-    execute_fee : {
+    costProduct : {
         type : Number,
         require : true
     },
-    of_execute_month : {
+    billingFrequency : {
         type : Number,
         require : true
     },
-    billing_period : {
+    expertHours : {
         type : Number,
-        require : true
-    },
-    plan_type : {
-        type : Number,
-        require : true
-    },
-    product_display_order : {
-        type : Number,
-        require : true
-    },
-    product_status : {
-        type : Number,
-        require : true
-    },
-    product_type : {
-        type : Array,
-        require : true
-    },
-    date_created : {
-        type : Date,
         require : true,
-        default : Date.now()
+        default : 0
     },
-    who : {
-        type : String
+    amountFirstPayment : {
+        type: Number,
+        require : true,
+        default : 0
+    },
+    createdAt : {
+        type: Date,
+        default: Date.now()
     }
+    
 });
+
+schema.methods = {
+    
+    /**
+     * Create plan payment
+     * @return {object} 
+     * */
+    createPlanPayment : function() {
+        return {
+            id : this._id,
+            amount : this.costProduct
+        }
+    },
+    
+    /**
+     * Create build  first payment
+     * @return {object}
+     * */
+    createFirstBuildPayment : function() {
+        return {
+            id : this._id,
+            amount : this.amountFirstPayment
+        }
+    }
+};
+
 
 module.exports = mongoose.model('Product', schema);

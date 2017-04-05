@@ -19,11 +19,7 @@ class ProductController {
 
     static updateProduct(req)
     {
-        let product = req.query;
-        product.product_type.forEach( function(item,i) {
-            product.product_type[i] = JSON.parse(item);
-        });
-        return Product.updateProduct(product);
+        return Product.updateProduct(req.query);
     }
     
     static deleteProduct(req) {

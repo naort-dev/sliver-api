@@ -9,36 +9,7 @@ class AuthController {
     }
 
     static signup(req) {
-        let userData = {
-            name : req.body.name,
-            email : req.body.email,
-            password : req.body.password
-        };
-        
-        let cardData = req.body.card;
-        let mongoUser;
-        
-        return new Promise( (resolve,reject) => {
-            User.create(userData)
-                .then( (user) => {
-                    return mongoUser = user;
-                })
-                .then( () => {
-                    return StripeService.createCustomer(userData,cardData);
-                })
-                .then( (customer) => {
-                    return User.update(customer.id,mongoUser._id);
-                })
-                .then( () => {
-                    resolve(mongoUser);
-                })
-                .catch((err) => {
-                    if(err instanceof StripeError){
-                        User.delete(mongoUser);
-                    }
-                    return reject(err);
-                });
-        });
+        return User.signUp(req.body);
     }
 
     static sendToken(req) {
