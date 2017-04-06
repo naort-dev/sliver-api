@@ -28,11 +28,22 @@ let schema = new Schema({
         require : true,
         default : 0
     },
+    costMonth : {
+        type : Number
+    },
     createdAt : {
         type: Date,
         default: Date.now()
+    },
+    typeProduct : {
+        type: Boolean
+    },
+    status : {
+      type: Boolean  
+    },
+    buildType : {
+        type: Object
     }
-    
 });
 
 schema.methods = {
@@ -52,11 +63,17 @@ schema.methods = {
      * Create build  first payment
      * @return {object}
      * */
-    createFirstBuildPayment : function() {
+    createBuildPayment : function() {
         return {
             id : this._id,
-            amount : this.amountFirstPayment
+            amount : this.buildType == 1 ? this.amountFirstPayment : this.costProduct
         }
+    }
+};
+
+schema.statics = {
+    calculateCostBuildMonth : function(product) {
+        return (product.costProduct - product.amountFirstPayment) / product.billingFrequency;
     }
 };
 

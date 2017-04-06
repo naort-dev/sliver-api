@@ -55,7 +55,7 @@ class User {
                 .then((build) => {
                     if(build) {
                         // mongo.build = build;
-                        return build.createFirstBuildPayment();
+                        return build.createBuildPayment();
                     }
                 })
                 .then((payment) => {
