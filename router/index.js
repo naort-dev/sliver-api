@@ -38,6 +38,12 @@ router.post('/createProduct', productValid, (req,res) => runAction(productContro
 router.get('/v1/products/plans', (req,res) => runAction(productController.getPlans, req,res));
 router.get('/v1/products/builds', (req,res) => runAction(productController.getBuilds, req,res));
 
+//LandingPage on Agile
+router.get('/landing/createCharges', (req,res) => {
+    console.log(req,123); 
+});
+
+
 //AuthAdmin
 router.get('/v1/auth/reset', (req, res) => runAction(authController.sendToken, req, res));
 router.post('/v1/auth/check-password', (req,res) => runAction(authController.checkPassword,req,res));
