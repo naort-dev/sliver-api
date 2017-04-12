@@ -39,8 +39,9 @@ router.get('/v1/products/plans', (req,res) => runAction(productController.getPla
 router.get('/v1/products/builds', (req,res) => runAction(productController.getBuilds, req,res));
 
 //LandingPage on Agile
-router.get('/landing/createCharges', (req,res) => {
+router.post('/landing/createCharges', (req,res) => {
     console.log(req,123); 
+    return 123;
 });
 
 
