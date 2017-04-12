@@ -80,6 +80,31 @@ class Product {
             });
         });
     }
+
+    /**
+     * Get one bild type oneTime and one build type installments
+     *
+     **/
+    static getBuilds() {
+        return new Promise((resolve, reject) => {
+            let result = [];
+            let builds = {};
+            MongooseProduct.findOne({'buildType.id' : 1,status: true,typeProduct:false})
+                .then((response) => {
+                    builds.installments = response;
+                    return MongooseProduct.findOne({'buildType.id' : 2,status: true,typeProduct:false});
+                })
+                .then((response) => {
+                    builds.oneTime = response;
+                    result.push(builds);
+                    resolve(result);
+                })
+                .catch((err) => {
+                    return reject(err);
+                });
+
+        });
+    }
 }
 
 module.exports = Product;

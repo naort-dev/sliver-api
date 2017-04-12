@@ -74,7 +74,12 @@ schema.methods = {
 schema.statics = {
     calculateCostBuildMonth : function(product) {
         return (product.costProduct - product.amountFirstPayment) / product.billingFrequency;
-    }
+    },
+    
+    getPlans : function(criteria) {
+        return this.find(criteria).limit(6).exec();   
+    },
+    
 };
 
 
