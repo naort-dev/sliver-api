@@ -88,23 +88,46 @@ class Product {
     static getBuilds() {
         return new Promise((resolve, reject) => {
             let result = [];
-            let builds = {};
-            MongooseProduct.findOne({'buildType.id' : 1,status: true,typeProduct:false})
-                .then((response) => {
-                    builds.installments = response;
-                    return MongooseProduct.findOne({'buildType.id' : 2,status: true,typeProduct:false});
-                })
-                .then((response) => {
-                    builds.oneTime = response;
-                    result.push(builds);
-                    resolve(result);
-                })
-                .catch((err) => {
-                    return reject(err);
+            // let builds = {};
+
+            MongooseProduct.findOne({
+                buildType : this.BUILD_ONETIME,
+                status: this.ACTIVE,
+                typeProduct:this.TYPE_BUILD})
+            .then((response) => {
+                if(response) {
+                    result.push(response);                    
+                }
+                
+                return MongooseProduct.findOne({
+                    buildType : this.BUILD_INSTALLMENTS,
+                    status: this.ACTIVE,
+                    typeProduct:this.TYPE_BUILD
                 });
+            })
+            .then((response) => {
+                if(response) {
+                    result.push(response);
+                }
+                // builds.oneTime = response;
+                resolve(result);
+            })
+            .catch((err) => {
+                return reject(err);
+            });
 
         });
     }
 }
+
+Product.TYPE_PLAN = 1;
+Product.TYPE_BUILD = 2;
+
+
+Product.ACTIVE = 1;
+Product.INACTIVE = 0;
+
+Product.BUILD_INSTALLMENTS = 1;
+Product.BUILD_ONETIME = 2;
 
 module.exports = Product;

@@ -31,6 +31,12 @@ class Stripe {
     }
 
     static _createCard(card) {
+        let expDate = card.date.split('/',2);
+        card.exp_month = expDate[0];
+        card.exp_year = expDate[1];
+
+        delete card.date;        
+        
         return new Promise( (resolve,reject) => {
             stripe.tokens.create({card : card}, (err,token) => {
                 return err ? reject(new StripeError('Failed create card', 'BAD_DATA', {orig: err.stack})) : resolve(token);

@@ -10,6 +10,7 @@ const config = require('../config');
 const stripe = require('../services/stripe');
 const StripeService = stripe.service;
 const StripeError = require('../services/stripe/errors/StripeError');
+const Product = require('../models/product');
 
 class User {
 
@@ -32,8 +33,6 @@ class User {
     
     static signUp(userData) {
         return new Promise((resolve,reject) => {
-            userData.buildId = '';
-
             let self = this;
             let mongo = {payments: []};
 
@@ -55,7 +54,7 @@ class User {
                 .then((build) => {
                     if(build) {
                         // mongo.build = build;
-                        return build.createBuildPayment();
+                        return build.createBuildPayment(Product.BUILD_INSTALLMENTS);
                     }
                 })
                 .then((payment) => {

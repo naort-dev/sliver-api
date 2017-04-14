@@ -36,13 +36,13 @@ let schema = new Schema({
         default: Date.now()
     },
     typeProduct : {
-        type: Boolean
+        type: Number
     },
     status : {
-      type: Boolean  
+      type: Number  
     },
     buildType : {
-        type: Object
+        type: Number
     }
 });
 
@@ -63,22 +63,18 @@ schema.methods = {
      * Create build  first payment
      * @return {object}
      * */
-    createBuildPayment : function() {
+    createBuildPayment : function(type) {
         return {
             id : this._id,
-            amount : this.buildType == 1 ? this.amountFirstPayment : this.costProduct
+            amount : this.buildType.id == type ? this.amountFirstPayment : this.costProduct
         }
     }
 };
 
-schema.statics = {
-    calculateCostBuildMonth : function(product) {
-        return (product.costProduct - product.amountFirstPayment) / product.billingFrequency;
-    },
-    
+schema.statics = {       
     getPlans : function(criteria) {
         return this.find(criteria).limit(6).exec();   
-    },
+    }
     
 };
 

@@ -29,7 +29,7 @@ class ProductController {
     }
     
     static getPlans() {
-       return mProduct.getPlans({status:true,typeProduct:true});
+       return mProduct.getPlans({status:Product.ACTIVE,typeProduct:Product.TYPE_PLAN});
     }
     
     static getBuilds() {
