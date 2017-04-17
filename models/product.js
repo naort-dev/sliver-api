@@ -13,33 +13,6 @@ class Product {
     }
 
     /**
-     * Get all list products
-     *
-     * @return {Promise} result
-     * */
-    static getProducts() {
-        let fields = {
-            'productName': 1,
-            'productDescription': 1,
-            'costProduct': 1,
-            'billingFrequency': 1,
-            'expertHours': 1,
-            'amountFirstPayment': 1,
-            'createdAt': 1,
-            '_id': 1
-        };
-
-        return new Promise((resolve, reject) => {
-            let query = MongooseProduct.find()
-                .select(fields);
-
-            query.exec(function (err, result) {
-                return err ? reject(err) : resolve(result);
-            });
-        });
-    }
-
-    /**
      * Get product by ID
      * 
      * @param {string} id

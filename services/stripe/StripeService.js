@@ -31,9 +31,8 @@ class Stripe {
     }
 
     static _createCard(card) {
-        let expDate = card.date.split('/',2);
-        card.exp_month = expDate[0];
-        card.exp_year = expDate[1];
+        card.exp_month = card.date.substring(0,2);
+        card.exp_year = card.date.substring(2,6);
 
         delete card.date;        
         

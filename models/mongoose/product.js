@@ -72,8 +72,21 @@ schema.methods = {
 };
 
 schema.statics = {       
-    getPlans : function(criteria) {
-        return this.find(criteria).limit(6).exec();   
+    /**
+     * List Products
+     *
+     * @param {Object} options
+     * @api private
+     */
+    list: function (options) {
+        options = options || {};
+        const criteria = options.criteria || {};
+        const page = options.page || 0;
+        const limit = options.limit || 30;
+        return this.find(criteria)
+            .limit(limit)
+            .skip(limit * page)
+            .exec();
     }
     
 };

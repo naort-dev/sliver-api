@@ -11,7 +11,7 @@ class ProductController {
     
     static getProducts()
     {
-        return Product.getProducts();
+        return mProduct.list();
     }
 
     static getProduct(req)
@@ -29,7 +29,15 @@ class ProductController {
     }
     
     static getPlans() {
-       return mProduct.getPlans({status:Product.ACTIVE,typeProduct:Product.TYPE_PLAN});
+        let options = {
+            limit : 6,
+            criteria : {
+                status:Product.ACTIVE,
+                typeProduct:Product.TYPE_PLAN
+            }            
+        };
+        
+        return mProduct.list(options);
     }
     
     static getBuilds() {
