@@ -14,11 +14,21 @@ const Product = require('../models/product');
 
 class User {
 
+    /**
+     * Before create user hash password
+     * @param {object} userData
+     *
+     * @return {Promise}
+     * */
     static create(userData) {
         userData.password = hashPass.createHash(userData.password);
         return new MongooseUser(userData).save();
     }
     
+    /**
+     * @param {object} user
+     * @param {String} candidatePassword
+     * */
     static comparePassword(user, candidatePassword){
          return new Promise((resolve, reject) => {
              if(hashPass.validateHash(user.password,candidatePassword)) {
@@ -30,7 +40,11 @@ class User {
              
         });
     }
-    
+
+    /**
+     * @param userData
+     * @returns {Promise}
+     */
     static signUp(userData) {
         return new Promise((resolve,reject) => {
             let self = this;
@@ -96,6 +110,11 @@ class User {
         });
     }
 
+    /**
+     * @param email
+     * @param password
+     * @returns {Promise}
+     */
     static signIn(email, password) {
         return new Promise((resolve, reject) => {
             let mongooseUser;
@@ -111,6 +130,11 @@ class User {
         });
     }
 
+    /**
+     * Checks the token
+     * @param id
+     * @returns {Promise}
+     */
     static authToken(id) {
         return new Promise((resolve,reject) => {
             MongooseUser.findOne({_id : id})
@@ -122,7 +146,12 @@ class User {
                 .catch(reject);
         });
     }
-    
+
+    /**
+     * Send token to email to reset password
+     * @param email
+     * @returns {Promise}
+     */
     static sendToken(email) {
         return new Promise( (resolve,reject) => {
             async.waterfall([createToken,findUser,sendToken], (err,result) => {
@@ -187,6 +216,12 @@ class User {
         }
     }
 
+    /**
+     * 
+     * @param token
+     * @param password
+     * @returns {Promise}
+     */
     static resetPassword(token,password) {
         return new Promise( (resolve,reject) => {
             MongooseUser.findOne({token : token, expirationDate : {$gt : Date.now()} })
@@ -214,7 +249,13 @@ class User {
             });
         });
     }
-    
+
+    /**
+     * 
+     * @param stripeId
+     * @param userId
+     * @returns {Promise}
+     */
     static update(stripeId,userId) {
         return new Promise( (resolve,reject) => {
             MongooseUser.update({_id : userId}, {$set : {stripeId : stripeId}}, (err,result) => {
@@ -224,7 +265,13 @@ class User {
             });
         });
     }
-    
+
+    /**
+     * 
+     * @param email
+     * @param password
+     * @returns {Promise}
+     */
     static signinAdmin(email,password) {
         return new Promise((resolve, reject) => {
             let mongooseUser;

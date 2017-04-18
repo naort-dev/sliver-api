@@ -1,6 +1,4 @@
 const User = require('../models/user');
-const stripe = require('../services/stripe');
-const StripeService = stripe.service;
 const StripeError = require('../services/stripe/errors/StripeError');
 
 class AuthController {
