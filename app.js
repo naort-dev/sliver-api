@@ -1,8 +1,13 @@
 let express = require('express');
 let http = require('http');
-let router = require('./router/index');
+
 let bodyParser = require('body-parser');
 let expressValidator = require('express-validator');
+
+const fs = require('fs');
+const join = require('path').join;
+const models = join(__dirname, 'models/mongoose');
+const port = process.env.PORT || 8000;
 
 let app = express();
 
@@ -23,9 +28,18 @@ app.use((req, res, next) => {
     next();
 });
 
+// Bootstrap models
+fs.readdirSync(models)
+    .filter((file) => ~file.search(/^[^\.].*\.js$/))
+    .forEach((file) => {
+        // console.log(join(models, file));
+        require(join(models, file));
+    });
+
+let router = require('./router/index');
 app.use(router);
 
-http.createServer(app).listen(8000, () => {
+http.createServer(app).listen(port, () => {
     console.log('Run server');
 });
 

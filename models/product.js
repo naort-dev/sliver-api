@@ -1,4 +1,5 @@
 const MongooseProduct = require('../models/mongoose/product');
+const CustomError = require('../libs/error/CustomError');
 
 class Product {
 
@@ -21,7 +22,7 @@ class Product {
         return new Promise((resolve, reject) => {
             MongooseProduct.findOne({_id: id})
                 .then((data) => {
-                    if (!data) reject(new AuthError('Item not found to DB', 'NOT_FOUND'));
+                    if (!data) reject(new CustomError('Item not found to DB', 'NOT_FOUND'));
                     return resolve({product : data});
                 })
                 .catch(reject);

@@ -52,10 +52,17 @@ schema.methods = {
      * Create plan payment
      * @return {object} 
      * */
-    createPlanPayment : function() {
+    createPlanPayment : function(coupon) {
+        if(!coupon) {
+            return {
+                id : this._id,
+                amount : this.costProduct
+            }
+        }
+        
         return {
             id : this._id,
-            amount : this.costProduct
+            amount : coupon.typeCoupon ? this.costProduct - (this.costProduct * coupon.amount) / 100 : this.costProduct - coupon.amount
         }
     },
     

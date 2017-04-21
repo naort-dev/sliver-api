@@ -1,8 +1,9 @@
 const MongooseUser = require('../models/mongoose/user');
 const MongoosePayments = require('../models/mongoose/payments');
 const MongooseProduct = require('../models/mongoose/product');
+const MongooseCoupon = require('../models/mongoose/coupon');
 const hashPass = require('../libs/class/HashPass');
-const AuthError = require('../libs/error/AuthError');
+const CustomError = require('../libs/error/CustomError');
 const async = require('async');
 const nodemailer = require('nodemailer');
 const ses =require('nodemailer-ses-transport');
@@ -36,7 +37,7 @@ class User {
                     token : user.id
                 });
              }
-             return reject(new AuthError('Password miss match.', 'UNAUTH'));
+             return reject(new CustomError('Password miss match.', 'UNAUTH'));
              
         });
     }
@@ -56,8 +57,22 @@ class User {
                     return MongooseProduct.findOne({_id : userData.planId});
                 })
                 .then((plan) => {
-                    // mongo.plan = plan;
-                    return plan.createPlanPayment();
+                    mongo.plan = plan;
+                    if(userData.code) {
+                        return MongooseCoupon.validate(userData.code,plan._id)
+                            .then((coupon) => {
+                                return coupon;
+                            })
+                            .catch((err) => {
+                                console.log(err);
+                            });
+                    }
+                })
+                .then((coupon) => {
+                    if(coupon) {
+                        mongo.coupon = coupon;
+                    }
+                    return mongo.plan.createPlanPayment(coupon);
                 })
                 .then((payment) => {
                     mongo.payments.push(payment);
@@ -121,7 +136,7 @@ class User {
 
             MongooseUser.findOne({email : email})
                 .then((user) => {
-                    if(!user) reject(new AuthError('User not found to DB', 'NOT_FOUND'));
+                    if(!user) reject(new CustomError('User not found to DB', 'NOT_FOUND'));
                     return mongooseUser = user;
                 })
                 .then(() => User.comparePassword(mongooseUser, password))
@@ -139,7 +154,7 @@ class User {
         return new Promise((resolve,reject) => {
             MongooseUser.findOne({_id : id})
                 .then((user) => {
-                    if(!user) reject(new AuthError('User not found to DB', 'NOT_FOUND'));
+                    if(!user) reject(new CustomError('User not found to DB', 'NOT_FOUND'));
                     return user;
                 })
                 .then(resolve)
@@ -155,8 +170,8 @@ class User {
     static sendToken(email) {
         return new Promise( (resolve,reject) => {
             async.waterfall([createToken,findUser,sendToken], (err,result) => {
-                if(err) reject( new AuthError('Not send mail!', 'SERVICE_UNAVAILABLE', {orig : err}));
-                resolve(new AuthError('Letter email was sent! Run to your inbox to check it out', 'OK', {orig : result}));
+                if(err) reject( new CustomError('Not send mail!', 'SERVICE_UNAVAILABLE', {orig : err}));
+                resolve(new CustomError('Letter email was sent! Run to your inbox to check it out', 'OK', {orig : result}));
                 // resolve(result);
             });
         });
@@ -227,7 +242,7 @@ class User {
             MongooseUser.findOne({token : token, expirationDate : {$gt : Date.now()} })
                 .then( (user) => {
                     if(!user) {
-                        return reject( new AuthError(400,'Password reset token is invalid or has expired.')); 
+                        return reject( new CustomError(400,'Password reset token is invalid or has expired.')); 
                     }
                     
                     user.token = '';
@@ -278,7 +293,7 @@ class User {
 
             MongooseUser.findAdminByEmail(email)
                 .then((user) => {
-                    if(!user) reject(new AuthError('User not found to DB', 'NOT_FOUND'));
+                    if(!user) reject(new CustomError('User not found to DB', 'NOT_FOUND'));
                     return mongooseUser = user;
                 })
                 .then(() => User.comparePassword(mongooseUser, password))

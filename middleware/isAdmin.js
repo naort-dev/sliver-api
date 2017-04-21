@@ -6,6 +6,6 @@ module.exports = (req,res,next) => {
             user.isAdmin === 1 ? next() : res.status(403).send('Forbidden');
         })
         .catch( () => {
-            res.send(404).send('User not found');
+            res.status(404).send('User not found');
         });
 };

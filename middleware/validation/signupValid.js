@@ -1,7 +1,7 @@
 module.exports = (req,res,next) => {
     req.assert('name')
         .notEmpty().withMessage('name empty')
-        .isLength({min : 4, max : 20}).withMessage('name length 4 <= and >= 20');
+        .isLength({min : 1, max : 30}).withMessage('name length >= 30');
 
     req.assert('email')
         .notEmpty().withMessage('email empty')
