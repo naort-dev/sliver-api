@@ -41,7 +41,7 @@ router.get('/v1/products/plans', (req,res) => runAction(productController.getPla
 router.get('/v1/products/builds', (req,res) => runAction(productController.getBuilds, req,res));
 
 //Dashboard buy couponValid
-router.get('/v1/coupon/:code/:planId', (req,res) => runAction(couponController.validCode, req,res));
+router.get('/v1/coupon/:code/:planId', (req,res) => runAction(couponController.isValidCode, req,res));
 
 //AuthAdmin
 router.get('/v1/auth/reset', (req, res) => runAction(authController.sendToken, req, res));

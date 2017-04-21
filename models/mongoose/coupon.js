@@ -5,23 +5,28 @@ const CustomError = require('../../libs/error/CustomError');
 
 let schema = new Schema({
     name: {
-        type: String
+        type: String,
+        required: 'Name is not empty',
+        minlength: [4,'Name is min {MINLENGTH} letters']
     },
     code: {
-        type: String
+        type: String,
+        required: 'Code is not empty'
     },
     typeCoupon: {
         type: Number
     },
     amount: {
-        type: Number
+        type: Number,
+        required: 'Amount promo code is not empty'
     },
     plan: {
         type: Object,
-        default: null,
+        default: null
     },
     redemption: {
-        type: Number
+        type: Number,
+        default: null,
     },
     dateFrom: {
         type: Date
@@ -37,21 +42,68 @@ let schema = new Schema({
     }
 });
 
-schema.method = {
+schema.methods = {
+    /**
+     * Checks Expiration date
+     * 
+     * @returns {boolean}
+     */
+    expirationDate: function() {
+        const todayMoment = new moment();
+        return todayMoment.isBetween(this.dateFrom, this.dateUntil);
+    },
 
+    /**
+     * Check applied to plan
+     * 
+     * @param {string} planId
+     * @returns {boolean}
+     */
+    isCheckPlan: function(planId) {
+        return this.plan._id == planId;        
+    },
+
+    /**
+     * Coupon can be redeemed
+     *
+     * @returns {boolean}
+     */
+    isRedemption: function() {
+        return this.redemption > 0;
+    },
+    
+    validateAll: function (planId) {
+        let errors = [];
+        
+        if (!this.expirationDate()) {
+             errors.push(new CustomError('The promo code is already expired', 'BAD_DATA'));
+        }
+
+        if (this.plan && !this.isCheckPlan(planId)) {
+             errors.push(new CustomError('This promo code can\'t be applied for this plan', 'BAD_DATA'));
+        }
+        
+        if (this.redemption != null && !this.isRedemption()) {
+             errors.push(new CustomError('The promo code is invalid', 'BAD_DATA'));
+        }
+        
+        
+        return errors;
+    }
 };
 
 schema.statics = {
     /**
      * Find Product by id
      *
-     * @param {ObjectId} id
+     * @param {ObjectId} _id
      * @api private
      */
     load: function (_id) {
         return this.findOne({_id})
             .exec();
     },
+    
     /**
      * List Products
      *
@@ -71,36 +123,30 @@ schema.statics = {
             .exec();
     },
 
+    /**
+     * Find coupon by code
+     * 
+     * @param {string} code
+     * @returns {Promise}
+     */
     getCouponByCode: function(code) {
-        return this.findOne({code:code});
-            
+        return this.findOne({code: code});
     },
 
-    validate: function(code,planId) {
-        let coupon = null;
-        return this.findOne({code: code})
-            .then((result) => {
-                if(!result)  throw new CustomError('Code is NULL', 'BAD_DATA');
-
-                coupon = result;
-
-                const todayMoment = new moment();
-                return todayMoment.isBetween(result.dateFrom, result.dateUntil);
-            })
-            .then((res) => {
-                if(!res) throw new CustomError('Code expired', 'BAD_DATA');
-
-                if(coupon.plan && coupon.plan._id == planId) {
-                    return coupon;
+    isValidCode: function (code, planId) {
+        return this.getCouponByCode(code)
+            .then((coupon) => {
+                if(!coupon) {
+                    return Promise.reject(new CustomError('The promo code is invalid', 'BAD_DATA'));
                 }
 
-                throw new CustomError('The code does not match the selected plan','BAD_DATA');
+                const errors = coupon.validateAll(planId);
+                if(errors.length === 0) {
+                    return coupon;
+                }
+                return Promise.reject(errors[0]);
             })
-            .catch((err) => {
-                return err;
-            });
     }
-
 };
 
 module.exports = mongoose.model('Coupon', schema);

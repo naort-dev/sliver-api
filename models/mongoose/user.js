@@ -57,6 +57,9 @@ let schema = new Schema({
     },
     buildId : {
         type : String
+    },
+    coupon : {
+        type: Object
     }
 
 
@@ -66,9 +69,14 @@ schema.methods = {
     /**
      * Update customer data stripeAPI
      * @param {Object} customer
+     * @param {Object} coupon
      * */
-    updateStripeCustomer : function(customer) {
-        return this.update({$set: {stripeId:customer.id,stripeSource:customer.default_source}});
+    updateStripeCustomer : function(customer,coupon) {
+        return this.update({$set: {
+            stripeId:customer.id,
+            stripeSource:customer.default_source,
+            coupon: coupon
+        }});
     }
 };
 

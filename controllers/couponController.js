@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const Coupon = mongoose.model('Coupon');
-const CustomError = require('../libs/error/CustomError');
 
 class CouponController {
     
@@ -33,8 +32,8 @@ class CouponController {
         return Coupon.findOneAndRemove({_id: req.body._id});
     }
     
-    static validCode(req) {
-        return Coupon.validate(req.params.code,req.params.planId);
+    static isValidCode(req) {
+        return Coupon.isValidCode(req.params.code, req.params.planId);
     }
 }
 

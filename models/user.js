@@ -59,13 +59,15 @@ class User {
                 .then((plan) => {
                     mongo.plan = plan;
                     if(userData.code) {
-                        return MongooseCoupon.validate(userData.code,plan._id)
-                            .then((coupon) => {
-                                return coupon;
-                            })
-                            .catch((err) => {
-                                console.log(err);
-                            });
+                        
+                        return new Promise((resolve) => {
+                            MongooseCoupon.isValidCode(userData.code, plan._id)
+                                .then(resolve)
+                                .catch((err) => {
+                                    console.log(err);
+                                    resolve();
+                                });
+                        });
                     }
                 })
                 .then((coupon) => {
@@ -95,7 +97,7 @@ class User {
                 })
                 .then((customer) => {
                     mongo.customer = customer;
-                    return mongo.user.updateStripeCustomer(customer);
+                    return mongo.user.updateStripeCustomer(customer, mongo.coupon);
                 })
                 .then(() => {
                     return MongoosePayments.calculatePayments(mongo.payments);
@@ -113,6 +115,9 @@ class User {
                     }).save();
                 })
                 .then(() => {
+                    if(mongo.coupon.redemption != null) {
+                        MongooseCoupon.findOneAndUpdate({_id: mongo.coupon._id}, {$inc: {redemption: -1} });
+                    }
                     resolve(mongo.user);
                 })
                 .catch((err) => {
