@@ -1,4 +1,4 @@
-let mongoose = require('mongoose');
+let mongoose = require('../../libs/mongoose');
 let Schema = mongoose.Schema;
 const moment = require('moment');
 const CustomError = require('../../libs/error/CustomError');
@@ -7,7 +7,7 @@ let schema = new Schema({
     name: {
         type: String,
         required: 'Name is not empty',
-        minlength: [4,'Name is min {MINLENGTH} letters']
+        minlength: [4, 'Name is min {MINLENGTH} letters']
     },
     code: {
         type: String,
@@ -45,22 +45,26 @@ let schema = new Schema({
 schema.methods = {
     /**
      * Checks Expiration date
-     * 
+     *
      * @returns {boolean}
      */
-    expirationDate: function() {
+    expirationDate: function () {
         const todayMoment = new moment();
         return todayMoment.isBetween(this.dateFrom, this.dateUntil);
     },
 
     /**
      * Check applied to plan
-     * 
+     *
      * @param {string} planId
      * @returns {boolean}
      */
-    isCheckPlan: function(planId) {
-        return this.plan._id == planId;        
+    isCheckPlan: function (productId) {
+        return this.plan._id == productId;
+    },
+
+    isDurationOneTime() {
+        return this.duration == 1;
     },
 
     /**
@@ -68,27 +72,60 @@ schema.methods = {
      *
      * @returns {boolean}
      */
-    isRedemption: function() {
+    isRedemption: function () {
         return this.redemption > 0;
     },
-    
-    validateAll: function (planId) {
+
+    /**
+     * Validation coupon at the time of register user
+     *
+     * @param planId
+     * @returns {Array}
+     */
+    validateSignUp: function (planId) {
         let errors = [];
-        
+
         if (!this.expirationDate()) {
-             errors.push(new CustomError('The promo code is already expired', 'BAD_DATA'));
+            errors.push(new CustomError('The promo code is already expired', 'BAD_DATA'));
         }
 
         if (this.plan && !this.isCheckPlan(planId)) {
-             errors.push(new CustomError('This promo code can\'t be applied for this plan', 'BAD_DATA'));
+            errors.push(new CustomError('This promo code can\'t be applied for this plan', 'BAD_DATA'));
         }
-        
+
         if (this.redemption != null && !this.isRedemption()) {
-             errors.push(new CustomError('The promo code is invalid', 'BAD_DATA'));
+            errors.push(new CustomError('The promo code is invalid', 'BAD_DATA'));
         }
-        
-        
+
+
         return errors;
+    },
+
+    /**
+     * Validation coupon before charges product payments
+     * @param product
+     * @returns {boolean}
+     */
+    validationBeforeCharge(product) {
+        if (this.plan && !this.isCheckPlan(product._id) || this.isDurationOneTime()) {
+            return false;
+        }
+
+        return true;
+    },
+
+    /**
+     * Reduces redemption coupon at 1
+     *
+     * @returns {Promise|*}
+     */
+    minusRedemption() {
+        if (this.redemption == null) {
+            return;
+        }
+
+        this.redemption += -1;
+        return this.save();
     }
 };
 
@@ -103,7 +140,7 @@ schema.statics = {
         return this.findOne({_id})
             .exec();
     },
-    
+
     /**
      * List Products
      *
@@ -125,23 +162,23 @@ schema.statics = {
 
     /**
      * Find coupon by code
-     * 
+     *
      * @param {string} code
      * @returns {Promise}
      */
-    getCouponByCode: function(code) {
+    getCouponByCode: function (code) {
         return this.findOne({code: code});
     },
 
     isValidCode: function (code, planId) {
         return this.getCouponByCode(code)
             .then((coupon) => {
-                if(!coupon) {
+                if (!coupon) {
                     return Promise.reject(new CustomError('The promo code is invalid', 'BAD_DATA'));
                 }
 
-                const errors = coupon.validateAll(planId);
-                if(errors.length === 0) {
+                const errors = coupon.validateSignUp(planId);
+                if (errors.length === 0) {
                     return coupon;
                 }
                 return Promise.reject(errors[0]);

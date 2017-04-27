@@ -1,5 +1,5 @@
-let mongoose = require('../../libs/mongoose');
-let Schema = mongoose.Schema;
+const mongoose = require('../../libs/mongoose');
+const Schema = mongoose.Schema;
 
 let schema = new Schema({
     productName : {
@@ -47,34 +47,14 @@ let schema = new Schema({
 });
 
 schema.methods = {
-    
     /**
-     * Create plan payment
-     * @return {object} 
-     * */
-    createPlanPayment : function(coupon) {
-        if(!coupon) {
-            return {
-                id : this._id,
-                amount : this.costProduct
-            }
-        }
-        
-        return {
-            id : this._id,
-            amount : coupon.typeCoupon ? this.costProduct - (this.costProduct * coupon.amount) / 100 : this.costProduct - coupon.amount
-        }
-    },
-    
-    /**
-     * Create build  first payment
-     * @return {object}
-     * */
-    createBuildPayment : function(type) {
-        return {
-            id : this._id,
-            amount : this.buildType.id == type ? this.amountFirstPayment : this.costProduct
-        }
+     * Coupon application if available
+     * 
+     * @param coupon
+     * @returns {number}
+     */
+    applyCoupon(coupon) {
+        return this.amount = coupon.typeCoupon ? this.costProduct - (this.costProduct * coupon.amount) / 100 : this.costProduct - coupon.amount; //TODO: const typeCoupon
     }
 };
 
@@ -94,6 +74,15 @@ schema.statics = {
             .limit(limit)
             .skip(limit * page)
             .exec();
+    },
+
+    /**
+     * Find one product by criteria
+     * @param criteria
+     * @returns {Promise} 
+     */
+    load(criteria) {
+        return this.findOne(criteria).exec();
     }
     
 };

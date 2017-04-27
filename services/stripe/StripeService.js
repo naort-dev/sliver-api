@@ -1,7 +1,6 @@
 const config = require('../../config');
 const StripeError  = require('./errors/StripeError');
 const stripe = require('stripe')(config.stripe_key);
-const async = require('async');
 
 class Stripe {
 
@@ -43,17 +42,25 @@ class Stripe {
         });
     }
     
-    static createCharges(customer,payment) {
+    static createCharges(customer,amount) {
         return new Promise((resolve,reject) => {
             stripe.charges.create({
-                amount: payment.amount,
+                amount: amount,
                 currency: 'usd',
-                source: customer.default_source,
-                customer: customer.id
+                source: customer.default_source ? customer.default_source : customer.stripeSource,
+                customer: customer.stripeId ? customer.stripeId : customer.id
             }, (err,result) => {
                 return err ? reject(new StripeError('Failed create charges', 'BAD_DATA', {orig: err.stack})) : resolve(result);
             });
         });
+    }
+    
+    static getCustomerById(id) {
+        return new Promise((resolve,reject) => {
+            stripe.customers.retrieve(id, (err,result) => {
+                return err ? reject(new StripeError('Failed create charges', 'BAD_DATA', {orig: err.stack})) : resolve(result);
+            })
+        })
     }
 }
 

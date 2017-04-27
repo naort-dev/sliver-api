@@ -1,11 +1,12 @@
-const User = require('../models/user');
+const mongoose = require('mongoose');
+const User = mongoose.model('User');
 
 module.exports = (req,res,next) => {
-    User.authToken(req.query['access-token'])
+    User.load({_id: req.query['access-token']})
         .then( (user) => {
-            user.isAdmin === 1 ? next() : res.status(403).send('Forbidden');
+            return user.isAdmin() ? next() : res.status(403).send('Forbidden');
         })
         .catch( () => {
-            res.status(404).send('User not found');
+            return res.status(404).send('User not found');
         });
 };

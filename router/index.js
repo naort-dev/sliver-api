@@ -1,5 +1,8 @@
 let express = require('express');
 let router = express.Router();
+const schedule = require('../libs/class/Scheduler');
+
+schedule.run();
 
 //Validators
 let signinValid = require('../middleware/validation/signinValid');
@@ -13,7 +16,7 @@ const isAdmin = require('../middleware/isAdmin');
 let authController = require('../controllers/authController');
 let couponController = require('../controllers/couponController');
 let productController = require('../controllers/admin/productController');
-let authAdminController = require('../controllers/admin/authAdminController');
+let financialTrackerController = require('../controllers/financialTrackerController');
 
 const runAction =  (action, req, res) => {
     action(req, res)
@@ -30,7 +33,7 @@ const runAction =  (action, req, res) => {
 };
 
 //Auth
-router.get('/v1/auth/', (req, res) => runAction(authController.auth, req, res));
+router.get('/v1/auth/', (req, res) => runAction(authController.authToken, req, res));
 router.post('/v1/auth/', signinValid, (req, res) => runAction(authController.signin, req, res));
 router.post('/v1/auth/signup', signupValid, (req, res) => runAction(authController.signup, req, res));
 
@@ -48,11 +51,11 @@ router.get('/v1/auth/reset', (req, res) => runAction(authController.sendToken, r
 router.post('/v1/auth/check-password', (req,res) => runAction(authController.checkPassword,req,res));
 
 //Admin
-router.get('/admin/auth/', (req, res) => runAction(authController.auth, req, res));
-router.post('/admin/auth', signinValid, (req,res) => runAction(authAdminController.signinAdmin,req,res));
+router.get('/admin/auth/', (req, res) => runAction(authController.authToken, req, res));
+router.post('/admin/auth', signinValid, (req,res) => runAction(authController.signinAdmin,req,res));
 
 
-//Manage
+//Manage Products
 router.post('/admin/products', isAdmin, productValid, (req, res) => runAction(productController.create, req, res));
 router.get('/admin/products', isAdmin, (req, res) => runAction(productController.getProducts, req, res));
 router.get('/admin/products/:id', isAdmin, (req, res) => runAction(productController.getProduct, req, res));
@@ -67,7 +70,8 @@ router.get('/admin/coupon/:id', isAdmin, (req,res) => runAction(couponController
 router.put('/admin/coupon/:id', isAdmin, (req, res) => runAction(couponController.update, req, res));
 router.delete('/admin/coupon', isAdmin, (req,res) => runAction(couponController.remove,req,res));
 
-
+//Reports Financial Tracker
+router.get('/admin/financialTracker', isAdmin, (req,res) => runAction(financialTrackerController.getPayments,req,res));
 
 
 module.exports = router;
