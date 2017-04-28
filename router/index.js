@@ -11,6 +11,7 @@ let productValid = require('../middleware/validation/productValid');
 
 //Middleware
 const isAdmin = require('../middleware/isAdmin');
+const isUser = require('../middleware/isUser');
 
 //Controllers
 let authController = require('../controllers/authController');
@@ -45,6 +46,9 @@ router.get('/v1/products/builds', (req,res) => runAction(productController.getBu
 
 //Dashboard buy couponValid
 router.get('/v1/coupon/:code/:planId', (req,res) => runAction(couponController.isValidCode, req,res));
+
+//Dashboard settingUser
+router.get('/v1/payments', isUser, (req,res) => runAction(financialTrackerController.getPaymentsByUser, req,res));
 
 //AuthAdmin
 router.get('/v1/auth/reset', (req, res) => runAction(authController.sendToken, req, res));

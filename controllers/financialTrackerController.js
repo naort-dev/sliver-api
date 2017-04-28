@@ -38,6 +38,10 @@ class FinancialTrackerController {
             })
             .catch(err => console.log(err)); //TODO: winston add
     }
+    
+    static getPaymentsByUser(req) {
+        return Payment.list({userId: req.query['access-token']});
+    }
 
 
 }
