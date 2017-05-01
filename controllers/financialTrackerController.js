@@ -40,7 +40,7 @@ class FinancialTrackerController {
     }
     
     static getPaymentsByUser(req) {
-        return Payment.list({userId: req.query['access-token']});
+        return Payment.list({criteria: {userId: req.query['access-token']}});
     }
 
 

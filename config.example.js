@@ -7,6 +7,7 @@ module.exports = {
         rateLimit: 5,  // do not send more than 5 messages in a second
         region : '' //region AWS
     },
-    emailAddress : '', //AWS adress 
+    emailAddressAdmin : '', //AWS adress
+    emailAddressSupport : '', //AWS adress
     stripe_key : ''  // stripe key
 };

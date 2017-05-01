@@ -6,6 +6,7 @@ const Coupon = mongoose.model('Coupon');
 const moment = require('moment');
 const stripe = require('../../services/stripe');
 const StripeService = stripe.service;
+const Mailer = require('../class/Mailer');
 
 
 class PaymentTime {
@@ -76,18 +77,33 @@ class PaymentTime {
                                     })
                                 )
                                 .then(() => {
-                                    return StripeService.createCharges(user, Pay.calculate());
+                                    return StripeService.createCharges(user, Pay.calculate())
+                                        .then((res) => {
+                                            return res;
+                                        })
+                                        .catch((err) => {
+                                            console.log(err); //TODO: winston logger add
+                                            return null;
+                                        })
                                 })
                                 .then((charges) => {
                                     Pay.userId = user._id;
-                                    Pay.status = charges.status == 'succeeded' ? 1 : 0;
-                                    Pay.paymentDate = charges.created * 1000;
-                                    Pay.amountCharges = charges.amount;
+                                    Pay.status = charges ? 1 : 0;
+                                    Pay.paymentDate = charges ? (charges.created * 1000) : new Date();
+                                    Pay.amountCharges = charges ? charges.amount : Pay.calculate();
                                     return StripeService.getCustomerById(user.stripeId);
                                 })
                                 .then((customer) => {
                                     Pay.amountSaved = customer.account_balance;
                                     Pay.save();
+                                    if (Pay.status == 0) {
+                                        let subject = 'Payment issue';
+                                        let content = "Hi,there, " +
+                                            user.name + " " + user.lastName + " (" + user.businessName + ")" + " has a payment issue. The credit card was declined.\n" +
+                                            "Create a ticket for Pat to follow up with the client to solve payment issue.\n" +
+                                            "Kind regards,\n SLAPcenter Admin";
+                                        return Mailer.send(null, subject, content);
+                                    }
                                 })
                                 .then(() => {
                                     return;

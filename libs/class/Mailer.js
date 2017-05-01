@@ -9,8 +9,8 @@ class Mailer {
         
         return new Promise((resolve) => {
             return transporter.sendMail({
-                    from: config.emailAddress,
-                    to: email,
+                    from: config.emailAddressAdmin,
+                    to: email ? email : config.emailAddressAdmin,
                     subject: subject,
                     text: content
                 },
