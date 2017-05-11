@@ -3,6 +3,7 @@ const StripeError = require('../services/stripe/errors/StripeError');
 const Mailer = require('../libs/class/Mailer');
 const config = require('../config');
 const stripe = require('../services/stripe');
+const jwt = require('jsonwebtoken');
 const StripeService = stripe.service;
 
 const mongoose = require('mongoose');
@@ -19,7 +20,11 @@ class AuthController {
                 throw new CustomError('Whoops, your password are incorrect', 'UNAUTH');
             }
 
-            return {token: user._id};
+            let token = jwt.sign(user, config.secret, {
+                expiresIn: "24h" // expires in 24 hours
+            });
+
+            return {token: token};
         });
     }
 
@@ -106,14 +111,18 @@ class AuthController {
                     throw new CustomError('Whoops, your password are incorrect', 'UNAUTH');
                 }
 
-                return {token: user._id};
+                let token = jwt.sign(user, config.secret, {
+                    expiresIn: "24h" // expires in 24 hours
+                });
+
+                return {token: token};
             })
     }
 
     static sendToken(req) {
         return User.load({email: req.query.email})
             .then((user) => {
-                if (!user) throw new CustomError('не правильный эмаил, нет такого юзера', 'NOT_FOUND');
+                if (!user) throw new CustomError('User not found', 'NOT_FOUND');
 
                 return user.createToken();
             })
@@ -130,15 +139,12 @@ class AuthController {
                 if (!result) throw new CustomError('Not send mail!', 'SERVICE_UNAVAILABLE');
 
                 return new CustomError('Letter email was sent! Run to your inbox to check it out', 'OK', {orig: result});
-                ;
             });
     }
 
     static authToken(req) {
-        return User.load({_id: req.query['access-token']}).then((user) => {
-            if (!user) throw new CustomError('токен не валидный', 'UNAUTH');
-
-            return user;
+        return new Promise((resolve) => {
+            resolve(req.decoded._doc);
         });
     }
 
@@ -147,13 +153,13 @@ class AuthController {
 
         return User.load({token: req.body['access-token']})
             .then((user) => {
-                if (!user) throw new CustomError('Токен не валидный', 'NOT_FOUND');
+                if (!user) throw new CustomError('Failed to authenticate token.', 'NOT_FOUND');
                 mUser = user;
 
                 return user.expDate();
             })
             .then((result) => {
-                if (!result) throw new CustomError('Время действия токена истекло, повторите процедуру сброса пароля', 'BAD_DATA');
+                if (!result) throw new CustomError('Failed to authenticate token.', 'BAD_DATA');
 
                 return mUser.resetPassword(req.body['new_password']);
             });
