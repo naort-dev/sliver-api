@@ -59,8 +59,10 @@ router.post('/v1/privilegeAndResponsibility', isAuth, (req,res) => runAction(min
 router.post('/v1/slapStartDate', isAuth, (req,res) => runAction(mindsetController.startDateDataSave, req,res));
 router.post('/v1/yourStatement', isAuth, (req,res) => runAction(mindsetController.yourStatementDataSave, req,res));
 router.post('/v1/whoAreYouIdealClient', isAuth, (req,res) => runAction(mindsetController.whoAreYouIdealClientDataSave, req,res));
+router.post('/v1/nameYourIdealClient', isAuth, (req,res) => runAction(mindsetController.nameYourIdealClientDataSave, req,res));
 router.get('/v1/whoAreYouIdealClient', isAuth, (req,res) => runAction(mindsetController.getWhoAreYouIdealClientData, req,res));
 router.get('/v1/yourStatement', isAuth, (req,res) => runAction(mindsetController.getYourStatementData, req,res));
+router.get('/v1/nameYourIdealClient', isAuth, (req,res) => runAction(mindsetController.getNameYourIdealClientData, req,res));
 
 
 //AuthAdmin

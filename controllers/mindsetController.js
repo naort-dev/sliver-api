@@ -52,6 +52,14 @@ class MindsetController {
     static getWhoAreYouIdealClientData(req) {
         return SlapMindset.findOne({userId: req.decoded._doc._id}).select('whoAreYouIdealClient').exec();
     }
+    
+    static nameYourIdealClientDataSave(req) {
+        return SlapMindset.UpdateOrCreate({userId: req.decoded._doc._id, nameYourIdealClient:req.body});
+    }
+
+    static getNameYourIdealClientData(req) {
+        return SlapMindset.findOne({userId: req.decoded._doc._id}).select('nameYourIdealClient').exec();
+    }
 }
 
 module.exports = MindsetController;

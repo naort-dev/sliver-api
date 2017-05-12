@@ -20,6 +20,9 @@ let schema = new Schema({
     },
     whoAreYouIdealClient: {
         type:Object
+    },
+    nameYourIdealClient: {
+        type: Object
     }
 });
 
