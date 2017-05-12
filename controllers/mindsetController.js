@@ -2,6 +2,10 @@ const mongoose = require('./../libs/mongoose');
 const SlapMindset = mongoose.model('slapMindset');
 
 class MindsetController {
+    
+    static getMindsetUserAllData(req) {
+        return SlapMindset.load({userId: req.decoded._doc._id});
+    }
 
     static userCommitmentDataSave(req) {
         let sliders = [];

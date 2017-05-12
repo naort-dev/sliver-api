@@ -17,7 +17,17 @@ let schema = new Schema({
 schema.statics = {
     UpdateOrCreate: function(obj) {
         return this.update({userId: obj.userId}, obj, {upsert: true,setDefaultsOnInsert: true});
-    }
+    },
+    
+    /**
+     * Find one user by criteria
+     *
+     * @param criteria
+     * @returns {Promise}
+     */
+    load(criteria) {
+        return this.findOne(criteria).exec();
+    },
 };
 
 module.exports = mongoose.model('slapMindset', schema);

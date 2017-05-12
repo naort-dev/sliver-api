@@ -52,6 +52,7 @@ router.get('/v1/coupon/:code/:planId', (req,res) => runAction(couponController.i
 router.get('/v1/payments', isAuth, (req,res) => runAction(financialTrackerController.getPaymentsByUser, req,res));
 
 //SlapMindset
+router.post('/v1/allMindsetUser', isAuth, (req,res) => runAction(mindsetController.getMindsetUserAllData, req,res));
 router.post('/v1/yourCommitment', isAuth, (req,res) => runAction(mindsetController.userCommitmentDataSave, req,res));
 router.post('/v1/areYourStuck', isAuth, (req,res) => runAction(mindsetController.areYouStuckDataSave, req,res));
 router.post('/v1/privilegeAndResponsibility', isAuth, (req,res) => runAction(mindsetController.privilegeAndResponsibilityDataSave, req,res));
