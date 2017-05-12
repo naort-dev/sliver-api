@@ -36,7 +36,7 @@ schema.statics = {
      */
     load(criteria) {
         return this.findOne(criteria).exec();
-    },
+    }
 };
 
 module.exports = mongoose.model('slapMindset', schema);

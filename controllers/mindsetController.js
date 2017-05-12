@@ -41,6 +41,10 @@ class MindsetController {
         return SlapMindset.UpdateOrCreate({userId: req.decoded._doc._id, yourStatement:req.body});
     }
     
+    static getYourStatementData(req) {
+        return SlapMindset.findOne({userId: req.decoded._doc._id}).select('yourStatement').exec();
+    }
+    
     static whoAreYouIdealClientDataSave(req) {
         return SlapMindset.UpdateOrCreate({userId: req.decoded._doc._id, whoAreYouIdealClient:req.body});
     }
