@@ -14,6 +14,9 @@ let schema = new Schema({
     },
     privilegeAndResponsibility: {
         type: Object
+    },
+    yourStatement: {
+        type: Object
     }
 });
 

@@ -36,6 +36,12 @@ class MindsetController {
             resolve({status: 'ok'});
         })
     }
+    
+    static yourStatementDataSave(req) {
+        return new Promise((resolve,reject) => {
+            resolve({status: 'ok'});
+        })
+    }
 }
 
 module.exports = MindsetController;
