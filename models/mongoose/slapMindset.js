@@ -11,6 +11,9 @@ let schema = new Schema({
     },
     areYouStuckSliders: {
         type:Array
+    },
+    privilegeAndResponsibility: {
+        type: Object
     }
 });
 

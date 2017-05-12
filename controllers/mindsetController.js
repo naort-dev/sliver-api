@@ -27,14 +27,12 @@ class MindsetController {
         return SlapMindset.UpdateOrCreate({userId: req.decoded._doc._id, areYouStuckSliders: sliders});
     }
     
-    static privilegeAndResponsibilityDataSave(req) {
-        return Promise((resolve,reject) => {
-            resolve({status: 'ok'});
-        })
+    static privilegeAndResponsibilityDataSave(req) {        
+        return SlapMindset.UpdateOrCreate({userId: req.decoded._doc._id, privilegeAndResponsibility:req.body});
     }
     
     static startDateDataSave(req) {
-        return Promise((resolve,reject) => {
+        return new Promise((resolve,reject) => {
             resolve({status: 'ok'});
         })
     }
