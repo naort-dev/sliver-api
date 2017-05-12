@@ -38,9 +38,11 @@ class MindsetController {
     }
     
     static yourStatementDataSave(req) {
-        return new Promise((resolve,reject) => {
-            resolve({status: 'ok'});
-        })
+        return SlapMindset.UpdateOrCreate({userId: req.decoded._doc._id, yourStatement:req.body});
+    }
+    
+    static whoAreYouIdealClientDataSave(req) {
+        return SlapMindset.UpdateOrCreate({userId: req.decoded._doc._id, whoAreYouIdealClient:req.body});
     }
 }
 

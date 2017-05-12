@@ -4,27 +4,30 @@ let Schema = mongoose.Schema;
 
 let schema = new Schema({
     userId: {
-        type:String
+        type: String
     },
     youCommitmentSliders: {
         type: Array
     },
     areYouStuckSliders: {
-        type:Array
+        type: Array
     },
     privilegeAndResponsibility: {
         type: Object
     },
     yourStatement: {
         type: Object
+    },
+    whoAreYouIdealClient: {
+        type:Object
     }
 });
 
 schema.statics = {
-    UpdateOrCreate: function(obj) {
-        return this.update({userId: obj.userId}, obj, {upsert: true,setDefaultsOnInsert: true});
+    UpdateOrCreate: function (obj) {
+        return this.update({userId: obj.userId}, obj, {upsert: true, setDefaultsOnInsert: true});
     },
-    
+
     /**
      * Find one user by criteria
      *

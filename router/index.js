@@ -58,6 +58,7 @@ router.post('/v1/areYourStuck', isAuth, (req,res) => runAction(mindsetController
 router.post('/v1/privilegeAndResponsibility', isAuth, (req,res) => runAction(mindsetController.privilegeAndResponsibilityDataSave, req,res));
 router.post('/v1/slapStartDate', isAuth, (req,res) => runAction(mindsetController.startDateDataSave, req,res));
 router.post('/v1/yourStatement', isAuth, (req,res) => runAction(mindsetController.yourStatementDataSave, req,res));
+router.post('/v1/whoAreYouIdealClient', isAuth, (req,res) => runAction(mindsetController.whoAreYouIdealClientDataSave, req,res));
 
 
 //AuthAdmin
