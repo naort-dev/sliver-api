@@ -60,7 +60,7 @@ router.post('/v1/slapStartDate', isAuth, (req,res) => runAction(mindsetControlle
 router.post('/v1/yourStatement', isAuth, (req,res) => runAction(mindsetController.yourStatementDataSave, req,res));
 router.post('/v1/whoAreYouIdealClient', isAuth, (req,res) => runAction(mindsetController.whoAreYouIdealClientDataSave, req,res));
 router.get('/v1/whoAreYouIdealClient', isAuth, (req,res) => runAction(mindsetController.getWhoAreYouIdealClientData, req,res));
-router.get('/v1/whoAreYouIdealClient', isAuth, (req,res) => runAction(mindsetController.getYourStatementData, req,res));
+router.get('/v1/yourStatement', isAuth, (req,res) => runAction(mindsetController.getYourStatementData, req,res));
 
 
 //AuthAdmin
