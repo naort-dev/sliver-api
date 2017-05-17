@@ -77,6 +77,10 @@ let schema = new Schema({
     createdAt : {
         type: Date,
         default: new Date()
+    },
+    finishedSteps: {
+        type: Array,
+        default: []
     }
 
 
@@ -164,8 +168,8 @@ schema.statics = {
      * @param criteria
      * @returns {Promise}
      */
-    load(criteria) {
-        return this.findOne(criteria).exec();
+    load(criteria,select) {
+        return this.findOne(criteria).select(select).exec();
     },
 
     /**
@@ -184,6 +188,10 @@ schema.statics = {
             // .skip(limit * page)
             .exec();
     },
+
+    UpdateOrCreate: function(obj) {
+        return this.update({_id: obj.userId}, obj, {upsert: true, setDefaultsOnInsert: true});
+    }
 
     // findAdminByEmail : function() {
     //      return this.findOne({email : email, isAdmin : ADMIN}, callback);

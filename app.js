@@ -36,8 +36,7 @@ fs.readdirSync(models)
         require(join(models, file));
     });
 
-let router = require('./router/index');
-app.use(router);
+require('./router/index')(app);
 
 http.createServer(app).listen(port, () => {
     console.log('Run server');

@@ -2,6 +2,8 @@ const mongoose = require('./../../libs/mongoose');
 
 let Schema = mongoose.Schema;
 
+const Mindset = require('./class/Mindset');
+
 let schema = new Schema({
     userId: {
         type: String
@@ -15,31 +17,11 @@ let schema = new Schema({
     privilegeAndResponsibility: {
         type: Object
     },
-    yourStatement: {
-        type: Object
-    },
-    whoAreYouIdealClient: {
-        type:Object
-    },
-    nameYourIdealClient: {
+    startDate: {
         type: Object
     }
 });
 
-schema.statics = {
-    UpdateOrCreate: function (obj) {
-        return this.update({userId: obj.userId}, obj, {upsert: true, setDefaultsOnInsert: true});
-    },
-
-    /**
-     * Find one user by criteria
-     *
-     * @param criteria
-     * @returns {Promise}
-     */
-    load(criteria) {
-        return this.findOne(criteria).exec();
-    }
-};
+schema.loadClass(Mindset);
 
 module.exports = mongoose.model('slapMindset', schema);
