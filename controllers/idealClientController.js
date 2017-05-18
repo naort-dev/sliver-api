@@ -1,10 +1,14 @@
 const mongoose = require('./../libs/mongoose');
 const IdealClient = mongoose.model('IdealClient');
+const User = mongoose.model('User');
 
 class IdealClientController {
 
     static setNameIdealClient(req) {
-        console.log(req.body);
+        return IdealClient.UpdateOrCreate({userId: req.decoded._doc._id, nameYouIdealClient: req.body.data})
+            .then(() => {
+                return User.UpdateOrCreate({userId: req.decoded._doc._id, finishedSteps: req.body.finishedSteps});
+            });
     }
 
     static getNameIdealClient(req) {
@@ -17,7 +21,10 @@ class IdealClientController {
     }
 
     static setWhoAreYouIdealClient(req) {
-        return IdealClient.UpdateOrCreate({userId: req.decoded._doc._id, whoAreYouIdealClient:req.body});
+        return IdealClient.UpdateOrCreate({userId: req.decoded._doc._id, whoAreYouIdealClient: req.body.data})
+            .then(() => {
+                return User.UpdateOrCreate({userId: req.decoded._doc._id, finishedSteps: req.body.finishedSteps});
+            });
     }
 
     static getWhoAreYouIdealClient(req) {
@@ -25,7 +32,7 @@ class IdealClientController {
             userId: req.decoded._doc._id,
             select: 'whoAreYouIdealClient'
         };
-        
+
         return IdealClient.load(options);
     }
 

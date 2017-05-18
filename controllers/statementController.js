@@ -11,6 +11,13 @@ class StatementController {
                 return User.UpdateOrCreate({userId: req.decoded._doc._id, finishedSteps: req.body.finishedSteps});
             });
     }
+    
+    static setStepOneSummary(req) {
+        return Statement.UpdateOrCreate({userId: req.decoded._doc._id, stepOneSummary: req.body.data})
+            .then(() => {
+                return User.UpdateOrCreate({userId: req.decoded._doc._id, finishedSteps: req.body.finishedSteps});
+            });
+    }
 
     static getYourStatement(req) {
         let options = {

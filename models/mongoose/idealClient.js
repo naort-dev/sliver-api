@@ -8,7 +8,7 @@ const schema = new Schema({
         type: String
     },
     nameYouIdealClient: {
-        type: String
+        type: Object
     },
     whoAreYouIdealClient: {
         type:Object

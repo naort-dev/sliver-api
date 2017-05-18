@@ -9,6 +9,9 @@ const schema = new Schema({
     },
     yourStatement: {
         type: Object
+    },
+    stepOneSummary: {
+        type: Object
     }
 });
 
