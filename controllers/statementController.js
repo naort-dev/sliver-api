@@ -27,6 +27,15 @@ class StatementController {
 
         return Statement.load(options);
     }
+
+    static getStepOneSummary(req) {
+        let options = {
+            userId:req.decoded._doc._id,
+            select: 'stepOneSummary'
+        };
+
+        return Statement.load(options);
+    }
 }
 
 module.exports = StatementController;

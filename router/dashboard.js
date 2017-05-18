@@ -61,7 +61,8 @@ router.post('/slapStartDate', isAuth, (req, res) => runAction(mindsetController.
 //SlapStatement
 router.post('/yourStatement', isAuth, (req, res) => runAction(statementController.setYourStatement, req, res));
 router.get('/yourStatement', isAuth, (req, res) => runAction(statementController.getYourStatement, req, res));
-router.post('/step1Summary', isAuth, (req,res) => runAction(statementController.setStepOneSummary, req,res))
+router.post('/step1Summary', isAuth, (req,res) => runAction(statementController.setStepOneSummary, req,res));
+router.get('/step1Summary', isAuth, (req,res) => runAction(statementController.getStepOneSummary, req,res));
 
 //IdealClient
 router.post('/whoAreYouIdealClient', isAuth, (req, res) => runAction(idealClientController.setWhoAreYouIdealClient, req, res));
