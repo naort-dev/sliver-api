@@ -10,7 +10,7 @@ const schema = new Schema({
     yourStatement: {
         type: Object
     },
-    stepOneSummary: {
+    step1Summary: {
         type: Object
     }
 });

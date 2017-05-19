@@ -8,16 +8,16 @@ let schema = new Schema({
     userId: {
         type: String
     },
-    youCommitmentSliders: {
+    yourCommitment: {
         type: Array
     },
-    areYouStuckSliders: {
+    areYourStuck: {
         type: Array
     },
     privilegeAndResponsibility: {
         type: Object
     },
-    startDate: {
+    slapStartDate: {
         type: Object
     }
 });

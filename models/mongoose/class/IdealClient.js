@@ -3,10 +3,10 @@ class IdealClient {
     static UpdateOrCreate(obj) {
         return this.update({userId: obj.userId}, obj, {upsert: true, setDefaultsOnInsert: true});
     }
-    
+
     static load(options) {
         return this.findOne({userId: options.userId})
-            .select(options.select) 
+            .select(options.select)
             .exec();
     }
 }

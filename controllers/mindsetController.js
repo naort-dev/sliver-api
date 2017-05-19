@@ -10,27 +10,18 @@ class MindsetController {
 
     static setYourCommitment(req) {
         let finishedSteps = req.body.finishedSteps;
-        let sliders = [];
         
-        req.body.data.forEach((item, i) => {
-            sliders[i] = item.value;
-        });
-        
-        return SlapMindset.UpdateOrCreate({userId: req.decoded._doc._id, youCommitmentSliders: sliders})
+        return SlapMindset.UpdateOrCreate({userId: req.decoded._doc._id, yourCommitment: req.body.data})
             .then(() => {
                 return User.UpdateOrCreate({userId: req.decoded._doc._id, finishedSteps: finishedSteps});
             });
     }
 
     static setAreYouStuck(req) {
-        let sliders = [];
+        
         let finishedSteps = req.body.finishedSteps;
 
-        req.body.data.forEach((item, i) => {
-            sliders[i] = item.value;
-        });
-
-        return SlapMindset.UpdateOrCreate({userId: req.decoded._doc._id, areYouStuckSliders: sliders})
+        return SlapMindset.UpdateOrCreate({userId: req.decoded._doc._id, areYourStuck: req.body.data})
             .then(() => {
                 return User.UpdateOrCreate({userId: req.decoded._doc._id, finishedSteps: finishedSteps});
             });
@@ -48,7 +39,7 @@ class MindsetController {
     static setStartDate(req) {
         let finishedSteps = req.body.finishedSteps;
 
-        return SlapMindset.UpdateOrCreate({userId: req.decoded._doc._id, startDate:req.body.data})
+        return SlapMindset.UpdateOrCreate({userId: req.decoded._doc._id, slapStartDate:req.body.data})
             .then(() => {
                 return User.UpdateOrCreate({userId: req.decoded._doc._id, finishedSteps: finishedSteps});
             });

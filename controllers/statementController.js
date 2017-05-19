@@ -13,7 +13,7 @@ class StatementController {
     }
     
     static setStepOneSummary(req) {
-        return Statement.UpdateOrCreate({userId: req.decoded._doc._id, stepOneSummary: req.body.data})
+        return Statement.UpdateOrCreate({userId: req.decoded._doc._id, step1Summary: req.body.data})
             .then(() => {
                 return User.UpdateOrCreate({userId: req.decoded._doc._id, finishedSteps: req.body.finishedSteps});
             });
@@ -31,7 +31,7 @@ class StatementController {
     static getStepOneSummary(req) {
         let options = {
             userId:req.decoded._doc._id,
-            select: 'stepOneSummary'
+            select: 'step1Summary'
         };
 
         return Statement.load(options);

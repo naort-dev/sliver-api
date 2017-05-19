@@ -5,7 +5,7 @@ const User = mongoose.model('User');
 class IdealClientController {
 
     static setNameIdealClient(req) {
-        return IdealClient.UpdateOrCreate({userId: req.decoded._doc._id, nameYouIdealClient: req.body.data})
+        return IdealClient.UpdateOrCreate({userId: req.decoded._doc._id, nameYourIdealClient: req.body.data})
             .then(() => {
                 return User.UpdateOrCreate({userId: req.decoded._doc._id, finishedSteps: req.body.finishedSteps});
             });

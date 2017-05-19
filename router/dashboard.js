@@ -49,6 +49,7 @@ router.get('/coupon/:code/:planId', (req, res) => runAction(couponController.isV
 
 //Dashboard settingUser
 router.get('/payments', isAuth, (req, res) => runAction(financialTrackerController.getPaymentsByUser, req, res));
+
 router.get('/getFinishedUserStep', isAuth, (req, res) => runAction(userController.getFinishedSteps, req, res));
 
 //SlapMindset
