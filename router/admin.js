@@ -13,7 +13,7 @@ const isAuth = require('../middleware/isAuth');
 //Controllers
 let authController = require('../controllers/authController');
 let couponController = require('../controllers/couponController');
-let productController = require('../controllers/admin/productController');
+let productController = require('../controllers/productController');
 let financialTrackerController = require('../controllers/financialTrackerController');
 
 const runAction =  (action, req, res) => {

@@ -50,4 +50,16 @@ let schema = new Schema({
 
 schema.loadClass(Product);
 
-module.exports = mongoose.model('Product', schema);
+const ProductModel = mongoose.model('Product', schema);
+
+ProductModel.TYPE_PLAN = 1;
+ProductModel.TYPE_BUILD = 2;
+
+
+ProductModel.ACTIVE = 1;
+ProductModel.INACTIVE = 0;
+
+ProductModel.BUILD_INSTALLMENTS = 1;
+ProductModel.BUILD_ONETIME = 2;
+
+module.exports = ProductModel;
