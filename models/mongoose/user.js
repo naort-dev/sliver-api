@@ -1,6 +1,8 @@
 const mongoose = require('../../libs/mongoose');
 const User = require('./class/User');
 
+const HashPass = require('../../libs/class/HashPass');
+
 let Schema = mongoose.Schema;
 
 let schema = new Schema({
