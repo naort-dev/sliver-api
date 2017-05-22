@@ -4,6 +4,7 @@ const Coupon = mongoose.model('Coupon');
 class CouponController {
     
     static create(req) {
+        
         let coupon = req.body;
         if(coupon.dateFrom) {
             coupon.dateFrom = new Date(coupon.dateFrom);
@@ -21,7 +22,7 @@ class CouponController {
     }
 
     static getCoupon(req) {
-       return Coupon.load(req.params.id);
+       return Coupon.load({_id: req.params.id});
     }
 
     static update(req) {
