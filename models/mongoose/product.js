@@ -1,6 +1,8 @@
 const mongoose = require('../../libs/mongoose');
 const Schema = mongoose.Schema;
 
+const Product = require('./class/Product');
+
 let schema = new Schema({
     productName : {
         type : String,
@@ -46,46 +48,6 @@ let schema = new Schema({
     }
 });
 
-schema.methods = {
-    /**
-     * Coupon application if available
-     * 
-     * @param coupon
-     * @returns {number}
-     */
-    applyCoupon(coupon) {
-        return this.amount = coupon.typeCoupon ? this.costProduct - (this.costProduct * coupon.amount) / 100 : this.costProduct - coupon.amount; //TODO: const typeCoupon
-    }
-};
-
-schema.statics = {       
-    /**
-     * List Products
-     *
-     * @param {Object} options
-     * @api private
-     */
-    list: function (options) {
-        options = options || {};
-        const criteria = options.criteria || {};
-        const page = options.page || 0;
-        const limit = options.limit || 30;
-        return this.find(criteria)
-            .limit(limit)
-            .skip(limit * page)
-            .exec();
-    },
-
-    /**
-     * Find one product by criteria
-     * @param criteria
-     * @returns {Promise} 
-     */
-    load(criteria) {
-        return this.findOne(criteria).exec();
-    }
-    
-};
-
+schema.loadClass(Product);
 
 module.exports = mongoose.model('Product', schema);
