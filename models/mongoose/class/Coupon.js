@@ -1,12 +1,13 @@
 const Promise = require('bluebird');
+const moment = require('moment');
+const CustomError = require('../../../libs/error/CustomError');
 
 class Coupon {
 
     /**
-     * Find Product by id
-     *
-     * @param {ObjectId} _id
-     * @api private
+     * 
+     * @param options
+     * @returns {Promise}
      */
     static load(options) {
         return this.findOne(options).exec();
@@ -35,7 +36,7 @@ class Coupon {
      * validation promocode
      * @param code
      * @param planId
-     * @returns {Promise|MPromise|*}
+     * @returns {Promise|*}
      */
     static isValidCode(code, planId) {
         return this.load({code:code})

@@ -1,6 +1,3 @@
-const moment = require('moment');
-const CustomError = require('../../libs/error/CustomError');
-
 let mongoose = require('../../libs/mongoose');
 let Schema = mongoose.Schema;
 let Coupon = require('./class/Coupon');
