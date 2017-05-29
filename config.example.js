@@ -9,5 +9,6 @@ module.exports = {
     },
     emailAddressAdmin : '', //AWS adress
     emailAddressSupport : '', //AWS adress
-    stripe_key : ''  // stripe key
+    stripe_key : ''  // stripe key,
+    secret: ''
 };
