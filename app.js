@@ -39,7 +39,7 @@ fs.readdirSync(models)
 require('./router/index')(app);
 
 http.createServer(app).listen(port, () => {
-    console.log('Run server');
+    console.log('Runing server on port: ' + port);
 });
 
 app.use((req, res, next) => {
@@ -59,3 +59,6 @@ app.use((err, req, res, next) => {
     res.end();
     // res.render('error');
 });
+
+//Exporting the app for testing porpouses
+module.exports = app;
